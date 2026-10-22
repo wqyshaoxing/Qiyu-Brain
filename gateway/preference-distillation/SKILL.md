@@ -29,6 +29,10 @@ Not for: recording anything said once in passing.
 - Does not rewrite global style after a single complaint. Three repetitions or an explicit "always" is the bar.
 - Does not store project details in `_profile`. Project conventions live with the project.
 
+## Requires
+
+`task-router` — this skill assumes a task context or an explicit exchange to learn from. Preferences inferred from nothing are guesses. Obtain it first if missing; how you do that is the agent's call.
+
 ## Workflow
 
 1. Collect candidates and classify each: one-off request / project-level convention / durable preference / identity fact.

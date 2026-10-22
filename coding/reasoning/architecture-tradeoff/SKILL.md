@@ -26,6 +26,10 @@ Design is choosing under constraint. Two options compared on real numbers beats 
 - Does not produce production code. A spike is allowed and must be labelled as one.
 - Does not skip the reversal cost. A reversible decision deserves less debate than an irreversible one.
 
+## Requires
+
+`requirement-intake` — this skill assumes a requirement spec with executable acceptance checks. Comparing designs against guesses is not a trade-off. Obtain it first if missing; how you do that is the agent's call.
+
 ## Workflow
 
 1. Collect real constraints: latency, throughput, data volume, team size, existing dependencies, deployment limits, compliance.

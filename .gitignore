@@ -25,3 +25,6 @@ search-out/
 .idea/
 Thumbs.db
 .DS_Store
+
+# 本地安装记录
+.qiyu/

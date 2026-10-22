@@ -26,6 +26,10 @@ A spec that a developer, a reviewer, and a test can all agree on. Written before
 - Does not invent business rules. Unknown rules become questions with a stated default.
 - Does not define UI aesthetics beyond what a test can check.
 
+## Requires
+
+`task-router` — this skill assumes a task contract. Without it, scope and acceptance criteria would be invented here instead of agreed upstream. Obtain it first if missing; how you do that is the agent's call.
+
 ## Workflow
 
 1. Describe current behaviour and expected behaviour as separate, observable statements.

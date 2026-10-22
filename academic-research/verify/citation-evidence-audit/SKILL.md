@@ -27,6 +27,10 @@ Not for: copy-editing, reference style formatting, or validating the analysis co
 - Does not declare misconduct. It records traceable mismatches; judgement belongs to editors and institutions.
 - Does not pass a draft it could not fully read. Partial coverage is reported as partial, never as pass.
 
+## Requires
+
+`paper-draft` — this skill assumes a draft with a claim index. Auditing prose without claim keys cannot tell an unsupported sentence from an uncited one. Obtain it first if missing; how you do that is the agent's call.
+
 ## Workflow
 
 1. Enumerate every in-text citation with its sentence context.

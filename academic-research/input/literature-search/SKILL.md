@@ -28,6 +28,10 @@ Not for: judging novelty, or reading full texts — that is reasoning and later 
 - Does not download paywalled or license-restricted PDFs; record the identifier and move on.
 - Stops at a screened, deduplicated candidate set. Synthesis belongs to `evidence-synthesis`.
 
+## Requires
+
+`task-router` — this skill assumes a signed task_contract (goal, non-goals, acceptance checks). Without it the search has no scope. Obtain it first if missing; how you do that is the agent's call.
+
 ## Workflow
 
 1. Restate the question as 2–3 answerable sub-questions. If the request cannot be split, ask the user before searching.

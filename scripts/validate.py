@@ -22,7 +22,7 @@ STAGES = ("input", "reasoning", "output", "verify", "gateway")
 LOOP_ROLES = {"entry", "transform", "render", "verify", "route"}
 MODES = {"agent", "script", "hybrid"}
 RESERVED_DIRS = {"scripts", "docs", "_core", "_memory", "_eval", "_profile",
-                 "third-party", "search-out", "dist", "config", "plugin"}
+                 "third-party", "search-out", "dist", "config"}
 REQUIRED_FIELDS = ("name", "description", "domain", "stage", "loop_role",
                    "consumes", "produces", "deps")
 LIST_FIELDS = {"stage", "consumes", "produces", "deps", "sources"}
@@ -207,6 +207,9 @@ def check_skill(skill_dir: Path, domain: str, stage_dir: str | None,
     if not isinstance(deps, list):
         errors.append(f"{rel}: 'deps' 必须是行内列表")
         deps = []
+    for dep in deps:
+        if isinstance(dep, str) and dep not in body:
+            warnings.append(f"{rel}: deps 含 '{dep}'，但正文未提到它（模型只看正文）")
 
     for line in ("## When to use", "## Boundary", "## Workflow", "## Artifacts"):
         if line not in body:
@@ -214,16 +217,19 @@ def check_skill(skill_dir: Path, domain: str, stage_dir: str | None,
 
     if not runtime.is_file():
         errors.append(f"{rel}: 缺少 runtime.json")
-        return {"name": name, "stages": stages, "sources": sources, "deps": deps}
+        return {"name": name, "stages": stages, "sources": sources, "deps": deps,
+            "produces": produces, "consumes": meta.get("consumes") or []}
 
     try:
         spec = json.loads(read_text(runtime))
     except json.JSONDecodeError as exc:
         errors.append(f"{rel}/runtime.json: 不是合法 JSON（{exc}）")
-        return {"name": name, "stages": stages, "sources": sources, "deps": deps}
+        return {"name": name, "stages": stages, "sources": sources, "deps": deps,
+            "produces": produces, "consumes": meta.get("consumes") or []}
     if not isinstance(spec, dict):
         errors.append(f"{rel}/runtime.json: 顶层必须是对象")
-        return {"name": name, "stages": stages, "sources": sources, "deps": deps}
+        return {"name": name, "stages": stages, "sources": sources, "deps": deps,
+            "produces": produces, "consumes": meta.get("consumes") or []}
 
     if spec.get("schema") != 1:
         errors.append(f"{rel}/runtime.json: schema 必须为 1")
@@ -302,7 +308,8 @@ def check_skill(skill_dir: Path, domain: str, stage_dir: str | None,
             if not isinstance(completion.get(key), bool):
                 errors.append(f"{rel}/runtime.json: completion.{key} 必须是布尔值")
 
-    return {"name": name, "stages": stages, "sources": sources, "deps": deps}
+    return {"name": name, "stages": stages, "sources": sources, "deps": deps,
+            "produces": produces, "consumes": meta.get("consumes") or []}
 
 
 def load_json(path: Path, errors: list[str]) -> object | None:
@@ -524,6 +531,17 @@ def main() -> int:
     dep_edges = sum(
         len([d for d in (by_name[n].get("deps") or []) if d in by_name]) for n in by_name
     )
+
+    # Data-flow contract: every consumed role should be produced somewhere,
+    # unless it is an external input the caller supplies.
+    EXTERNAL_INPUTS = {"user_request", "profile", "raw_brief", "codebase_map",
+                       "fulltext_notes", "sources", "task_contract_input"}
+    produced = {role for info in by_name.values() for role in (info.get("produces") or [])}
+    for name, info in by_name.items():
+        for role in info.get("consumes") or []:
+            if role not in produced and role not in EXTERNAL_INPUTS:
+                warnings.append(f"{name}: consumes '{role}'，但没有技能 produces 它")
+
     third_party_count = check_third_party(root, set(registry), sources_of, errors, warnings)
 
     index = root / "INDEX.md"

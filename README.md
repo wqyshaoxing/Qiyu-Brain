@@ -77,30 +77,53 @@ python scripts/validate.py
 5. 在 `INDEX.md` 登记一行，并在 `_eval/` 放至少一个 fixture。
 6. 跑 `validate.py`；有可执行动作时，脚本必须真的存在。
 
-## 打包成插件
+## 体系：靠依赖，不靠封装
 
-```text
-python scripts/build_plugin.py                # 构建 generic / agents / claude
-python scripts/build_plugin.py --check        # 校验 dist/ 完整性
-```
+本项目**只做技能**，不提供 MCP server，也不做宿主插件。体系边界写在 `SKILL.md` 里：
 
-源码是 `domain/stage/skill` 三层，宿主普遍要扁平的 `skills/<name>/`。构建器做三件事：打平目录、把每个技能连同 `scripts/` 与 `references/` 整份复制（保持自包含）、生成带版本与来源 commit 的 `manifest.json`。
+`yaml
+deps: [task-router]        # 前置技能
+consumes: [task_contract]  # 上游产物角色
+produces: [query_plan, result_matrix, search_log]
+`
 
-| host | 产物布局 | 状态 |
+| 字段 | 含义 | 谁来校验 |
 | --- | --- | --- |
-| `generic` | `skills/` + `manifest.json` | 已验证 |
-| `agents` | `.agents/skills/` + `manifest.json` | 已验证（Codex / skills.sh 风格） |
-| `claude` | `skills/` + `.claude-plugin/plugin.json` | **布局假设，未在真实宿主验证** |
+| `deps` | 需要先存在哪个技能 | `validate.py`：必须存在、不许成环、`shared` 只能依赖 `shared`、**且必须在正文出现** |
+| `consumes` / `produces` | 数据流契约，靠 role 名对接而不是文件名 | `validate.py`：被消费的 role 必须有人产出（外部输入除外） |
+| 正文 `## Requires` | 给模型看的前置条件 | 模型只读正文，frontmatter 里写了也没用 |
 
-`dist/` 已 gitignore。构建时会扫描并拒绝任何形似密钥的字符串（`sk-`、`tvly-`、`fc-`、`AIza`），也不会复制 `.env`。
+当前依赖图：
 
-## 装进宿主
+`	ext
+task-router ─┬─ literature-search → evidence-synthesis → paper-draft → citation-evidence-audit
+             ├─ requirement-intake → architecture-tradeoff → feature-implement → regression-gate
+             └─ preference-distillation
 
-```text
-python scripts/build_plugin.py --hosts generic --install <skills-root> [--force]
-```
+search-connectors   (独立)
+web-search          (独立)
+`
 
-DSH 的技能发现顺序（源码实测，非文档转述）：
+**调用方式由 agent 决定。** 技能声明要什么、给什么、什么算完成，不规定用哪个工具、拼哪条命令。`runtime.json` 里的脚本是**参考实现**，不是唯一路径。
+
+## 生命周期
+
+`	ext
+python scripts/qiyu.py build                     # 打平到 dist/（generic / agents / claude）
+python scripts/qiyu.py install --host dsh --root <skills-root> [--force]
+python scripts/qiyu.py adopt --host dsh --root <skills-root>   # 登记已有安装，不拷贝
+python scripts/qiyu.py status                    # 已装版本 vs 源码、漂移、缺失、未跟踪
+python scripts/qiyu.py doctor                    # 脚本参数一致性 + 凭据覆盖
+python scripts/qiyu.py uninstall --host dsh      # 只删记录过的目录
+`
+
+状态记在 `.qiyu/state.json`（gitignore），不写进宿主技能根，宿主只看到技能目录。
+
+`status` 区分四种状态：`insync` / `source-newer`（源码改了、装的是旧的）/ `modified`（安装副本被改过）/ `missing`。有漂移时退出码为 1。
+
+## 装进 DSH
+
+DSH 的技能发现顺序（源码实测）：
 
 | 优先级 | 来源 | 路径 |
 | --- | --- | --- |
@@ -110,13 +133,12 @@ DSH 的技能发现顺序（源码实测，非文档转述）：
 | 400 | user-dsh | `<dshHome>/skills` |
 | 500 | user-agents | `<agentsHome>/skills` |
 
-`projectRoot` 是最近的含 `.git` 的祖先；没有就用当前目录。DSH 的 `watch` 默认为 true，装进去的目录变化会被自动发现，无需重启。
+`projectRoot` 是最近的含 `.git` 的祖先；没有就用当前目录。`watch` 默认开启，装进去即被发现，无需重启。
 
-装完有两件事必须注意：
+装完注意两点：
 
-1. **配置要能被找到**。安装位置离仓库很远，`.env` 不再位于向上搜索链里。用 `QIYU_ENV_FILE` 指向它，或复制成 `~/.dsh/qiyu.env`。
-2. **改源码后要重装**。安装是复制而非链接，`--force` 才会覆盖。
-
+1. **配置要能被找到**。安装位置离仓库很远，`.env` 不在向上搜索链里。用 `QIYU_ENV_FILE` 指向它，或复制成 `~/.dsh/qiyu.env`。
+2. **改源码后要重装**。安装是复制而非链接，`--force` 才会覆盖；`status` 会告诉你哪些落后了。
 ## 与 BoomSkills 的关系
 
 **不重写执行层。** BoomSkills 的 `runs/`、`status`、`finish`、审查哈希绑定已经完整，Qiyu-Brain 复用那套 runtime：

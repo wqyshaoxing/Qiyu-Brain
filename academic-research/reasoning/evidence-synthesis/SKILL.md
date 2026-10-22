@@ -28,6 +28,10 @@ Not for: producing prose. Prose comes after the map, in `paper-draft`.
 - Does not upgrade evidence level. An abstract-derived note stays abstract-level forever.
 - Does not judge fraud; it flags patterns that need human or institutional review.
 
+## Requires
+
+`literature-search` — this skill assumes a screened, deduplicated matrix plus its search log. If neither exists, the claim map would be built on nothing. Obtain it first if missing; how you do that is the agent's call.
+
 ## Workflow
 
 1. Enumerate candidate claims as single sentences with one verb each. A claim with "and" is two claims.
