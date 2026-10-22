@@ -466,6 +466,21 @@ FETCHERS = {
 
 # --------------------------------------------------------------------- dedupe
 
+NOISE_TITLES = {
+    "waf page", "access denied", "access blocked", "just a moment...",
+    "attention required!", "403 forbidden", "404 not found", "page not found",
+    "are you a robot?", "verify you are human", "security check",
+}
+
+
+def is_noise(row: dict) -> bool:
+    """Blocked or interstitial pages that search engines still index."""
+    title = (row.get("title") or "").strip().lower()
+    if title in NOISE_TITLES:
+        return True
+    return title.startswith(("waf ", "captcha", "error ")) or "access denied" in title
+
+
 def norm_url(url: str) -> str:
     parts = urllib.parse.urlsplit(url)
     host = parts.netloc.lower().replace("www.", "")
@@ -476,22 +491,49 @@ def norm_url(url: str) -> str:
     return f"{host}{path}" + (f"?{query}" if query else "")
 
 
+def norm_title(text: str) -> str:
+    return re.sub(r"[^a-z0-9\u4e00-\u9fff]+", "", (text or "").lower())
+
+
 def dedupe(rows: list[dict]) -> tuple[list[dict], dict]:
+    """Two passes: normalized URL, then identical normalized title.
+
+    Regional mirrors (in./www./za./au. of the same article) share a title but
+    not a URL, so a URL-only pass lets them through. The title pass merges them
+    and keeps the alternate URLs for audit.
+    """
     kept: dict[str, dict] = {}
     order: list[str] = []
+    by_title: dict[str, str] = {}
+    mirror_merges = 0
+
     for row in rows:
         key = norm_url(row["url"]) or f"title:{row['title'].lower()}"
+        ntitle = norm_title(row["title"])
+
         if key in kept:
             first = kept[key]
             first["sources"] = sorted(set(first.get("sources", [first["source"]]) + [row["source"]]))
             if not first["snippet"] and row["snippet"]:
                 first["snippet"] = row["snippet"]
             continue
+
+        if len(ntitle) >= 20 and ntitle in by_title:
+            first = kept[by_title[ntitle]]
+            first.setdefault("alternate_urls", []).append(row["url"])
+            first["sources"] = sorted(set(first.get("sources", [first["source"]]) + [row["source"]]))
+            mirror_merges += 1
+            continue
+
         row["sources"] = [row["source"]]
         kept[key] = row
         order.append(key)
+        if len(ntitle) >= 20:
+            by_title[ntitle] = key
+
     removed = len(rows) - len(order)
-    return [kept[k] for k in order], {"raw": len(rows), "unique": len(order), "removed": removed}
+    return [kept[k] for k in order], {"raw": len(rows), "unique": len(order),
+                                      "removed": removed, "mirrors_merged": mirror_merges}
 
 
 # ---------------------------------------------------------------------- output
@@ -526,14 +568,15 @@ def write_outputs(out: Path, query: str, providers: list[str], limit: int,
     ]
     paths["query-plan.md"].write_text("\n".join(plan), encoding="utf-8")
 
-    fields = ["source", "sources", "engine", "rank", "title", "url", "snippet",
-              "evidence_level", "retrieved_at"]
+    fields = ["source", "sources", "engine", "rank", "title", "url", "alt_urls",
+              "snippet", "evidence_level", "retrieved_at"]
     with paths["results.csv"].open("w", encoding="utf-8-sig", newline="") as fh:
         writer = csv.DictWriter(fh, fieldnames=fields, extrasaction="ignore")
         writer.writeheader()
         for idx, row in enumerate(rows, 1):
             item = dict(row)
             item["sources"] = "|".join(row.get("sources", []))
+            item["alt_urls"] = "|".join(row.get("alternate_urls", []))
             item["rank"] = idx
             item["evidence_level"] = "snippet"
             item["retrieved_at"] = log["generated_at"]
@@ -659,6 +702,11 @@ def main(argv: list[str] | None = None) -> int:
         except Exception as exc:  # noqa: BLE001
             entry = {"name": name, "status": "failed", "error": f"{type(exc).__name__}: {exc}", "hits": 0}
             got = []
+        noisy = [r for r in got if is_noise(r)]
+        if noisy:
+            got = [r for r in got if not is_noise(r)]
+            entry["filtered_noise"] = len(noisy)
+            entry["hits"] = len(got)
         entry["elapsed_ms"] = int((time.time() - started) * 1000)
         log["providers"].append(entry)
         rows.extend(got)

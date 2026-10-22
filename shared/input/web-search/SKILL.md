@@ -64,7 +64,7 @@ A backend that cannot run is recorded with its reason. Silent substitution is no
 2. Start with `--providers free` (DuckDuckGo + Wikipedia). Add keyed engines only when coverage justifies the cost.
 3. Run with an explicit limit. Defaults are deliberately small; more rows rarely mean more information.
 4. Read `search-log.json` before the matrix: `skipped` (no key), `empty` (ran, nothing), `failed` (challenge, block, parse change) are three different facts.
-5. Deduplicate by normalized URL — host, path, and non-tracking parameters only — then merge engines per row.
+5. Deduplicate in two passes: normalized URL, then identical normalized title. Regional mirrors (`in.` / `za.` / `au.` of the same article) share a title but not a URL, so the title pass merges them and keeps the others in `alt_urls`. Blocked pages (WAF, 403, captcha interstitials) are dropped and counted as `filtered_noise` — dropped, never silently.
 6. Hand the rows to the caller. Reading pages, screening, and citing happen downstream.
 
 ## Boundary
@@ -100,7 +100,7 @@ A snippet is a snapshot of one moment, not ground truth.
 | role | file | checked for |
 | --- | --- | --- |
 | query_plan | `<out>/query-plan.md` | query, engines, limit, skipped backends, trust warning |
-| result_matrix | `<out>/results.csv` | one row per unique URL: engine, rank, title, snippet, retrieved_at |
+| result_matrix | `<out>/results.csv` | one row per unique result: engine, rank, title, url, `alt_urls` (mirrors), snippet, retrieved_at |
 | search_log | `<out>/search-log.json` | per-engine status, hits, elapsed, error text, dedup counts |
 
 ## Common mistakes
