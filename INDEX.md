@@ -40,6 +40,11 @@
 | --- | --- | --- | --- |
 | 我想改善睡眠/体重/精力，但不知道从哪开始 | input | [livebetter-context-intake](livebetter/input/livebetter-context-intake/SKILL.md) | life_context、triage_result |
 | 帮我定一个能坚持的作息/运动计划 | output | [livebetter-plan-draft](livebetter/output/livebetter-plan-draft/SKILL.md) | plan_draft、plan_metrics |
+| 这事合不合法 / 条文怎么写的 | input | [livebetter-legal-basis](livebetter/input/livebetter-legal-basis/SKILL.md) | legal_citations、applicability_note |
+| 这个补贴/落户/报销政策原文是什么 | input | [livebetter-policy-lookup](livebetter/input/livebetter-policy-lookup/SKILL.md) | policy_citations、eligibility_note |
+| 这个说法到底是不是真的 / 老一辈都这么做 | reasoning | [livebetter-commonsense-check](livebetter/reasoning/livebetter-commonsense-check/SKILL.md) | claim_check、sourcing_note |
+| 教我怎么把这件事办成，一步步来 | output | [livebetter-playbook](livebetter/output/livebetter-playbook/SKILL.md) | playbook、checklist |
+| 最近这事到底怎么回回事，消息可信吗 | output | [livebetter-briefing](livebetter/output/livebetter-briefing/SKILL.md) | briefing、source_ledger |
 | 这个计划对我安全吗 / 我这种情况能不能做 | verify | [livebetter-red-flag-check](livebetter/verify/livebetter-red-flag-check/SKILL.md) | red_flag_screen、escalation_note |
 
 命红旗时只给就医指引，不生成计划。

@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "briefing",
+      "kind": "markdown",
+      "required": true,
+      "note": "逐条带日期与来源层级；事实/表态/解读/未证实四类分开；不表态、不预测；末尾写『接下来看什么』。"
+    },
+    {
+      "role": "source_ledger",
+      "kind": "json",
+      "required": true,
+      "note": "每条含层级（primary/reporting/industry/unverified）、媒体、作者、日期、链接、支持了什么。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "只有单一层级来源：标注为单层来源，不假装交叉验证。",
+    "来源互相矛盾：并列呈现并注日期，不平均成假共识。",
+    "用户要一个结论：拒绝下判断，给证据状态与能定论的事件。"
+  ],
+  "todo": [
+    "把来源分层做成可机读字段，便于将来自动统计交叉验证覆盖率。",
+    "增加时间窗过滤：只收窗口内的条目，旧闻不混入。"
+  ]
+}

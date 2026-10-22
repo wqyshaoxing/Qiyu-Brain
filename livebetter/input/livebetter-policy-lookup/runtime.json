@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "policy_citations",
+      "kind": "json",
+      "required": true,
+      "note": "发布机关、文号、印发/生效/失效日期、层级（国家/省/市）、逐字条款、官方链接、检索日期。"
+    },
+    {
+      "role": "eligibility_note",
+      "kind": "markdown",
+      "required": true,
+      "note": "适用对象、门槛、所需材料、地方差异、去哪里办；不判断个人是否符合。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "只找到新闻解读：说明原文未找到，列出检索范围。",
+    "政策刚变更：新旧并列并标注对用户时点适用哪一版。",
+    "缺地方实施细则：指出缺口与可能持有该文件的部门。"
+  ],
+  "todo": [
+    "建立常用部门官网入口清单（人社、住建、税务、医保）。",
+    "增加文号校验：避免把相似文号的政策混用。"
+  ]
+}

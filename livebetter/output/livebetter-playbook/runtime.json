@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "playbook",
+      "kind": "markdown",
+      "required": true,
+      "note": "终点可验证、前置条件在前、逐步标明官方渠道、费用与时效标注来源、失败分支齐全。"
+    },
+    {
+      "role": "checklist",
+      "kind": "markdown",
+      "required": true,
+      "note": "每行一个可勾选动作，按顺序，含升级/申诉入口；脱离正文也能执行。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "找不到官方渠道：停下并说明该搜什么，不得凭记忆重建流程。",
+    "不同地区流程不同：按地区拆开，不做平均化描述。",
+    "用户某步失败：按分支处理并更新分支，不重写整份攻略。"
+  ],
+  "todo": [
+    "常用任务（租房、报销、办证、投诉）建立渠道索引，减少重复检索。",
+    "为 checklist 增加可执行格式（Markdown 复选框 + 截止日期列）。"
+  ]
+}

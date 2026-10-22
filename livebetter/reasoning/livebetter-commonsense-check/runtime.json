@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "claim_check",
+      "kind": "markdown",
+      "required": true,
+      "note": "可检验的复述、证据类别、结论五选一（holds/holds-with-conditions/outdated/false/cannot-determine）、条件与反例。"
+    },
+    {
+      "role": "sourcing_note",
+      "kind": "markdown",
+      "required": true,
+      "note": "每个来源的类型、日期、为何算这一类；商业宣传与标准要分开。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "只有商业来源：说明并把结论降为 cannot-determine。",
+    "安全相关且证据薄弱：转专业渠道，不猜。",
+    "发现本质是法规：交给 legal-basis，不在此转述。"
+  ],
+  "todo": [
+    "积累地域性常识（电压、气候、管道）的最小事实库。",
+    "为常见『生活常识』建立反例清单，避免一边倒。"
+  ]
+}

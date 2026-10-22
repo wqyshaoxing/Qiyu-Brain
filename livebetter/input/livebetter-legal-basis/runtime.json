@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "legal_citations",
+      "kind": "json",
+      "required": true,
+      "note": "每条含条号、原文逐字、发布机关、生效日期、检索日期、适用地域、官方链接；转述必须标注。"
+    },
+    {
+      "role": "applicability_note",
+      "kind": "markdown",
+      "required": true,
+      "note": "首行免责声明；适用条件、例外、歧义、缺失的地方细则，以及去哪里确认。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "查不到条文：说明检索范围与缺口，不得凭记忆重建条文。",
+    "条文刚修订：同时给出新旧版本与日期，标明何时适用哪一版。",
+    "用户问『我会不会赢』：拒绝预测，给条件与救济渠道，转律师或主管部门。"
+  ],
+  "todo": [
+    "建立常用领域（租房、劳动、消费）的官方入口清单，减少每次现找。",
+    "增加条文时效检查：引用前比对该法规的最近修订日期。"
+  ]
+}
