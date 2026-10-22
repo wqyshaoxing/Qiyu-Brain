@@ -21,7 +21,6 @@
       "keys": [
         {"name": "EXA_API_KEY", "secret": true, "required": false, "provider": "Exa", "help": "语义检索，按结果计费。学术与网页两个技能共用。", "signup": "https://dashboard.exa.ai/api-keys"},
         {"name": "TAVILY_API_KEY", "secret": true, "required": false, "provider": "Tavily", "help": "面向 AI 的检索，返回已清洗内容。免费额度较友好，建议先试这个。", "signup": "https://app.tavily.com/home"},
-        {"name": "BRAVE_API_KEY", "secret": true, "required": false, "provider": "Brave Search", "help": "独立索引，不转售 Google。", "signup": "https://brave.com/search/api/"},
         {"name": "SERPER_API_KEY", "secret": true, "required": false, "provider": "Serper", "help": "Google SERP 转售，合规风险自负。", "signup": "https://serper.dev"},
         {"name": "JINA_API_KEY", "secret": true, "required": false, "provider": "Jina", "help": "s.jina.ai 检索，返回带正文的 JSON。", "signup": "https://jina.ai/api-dashboard/"},
         {"name": "FIRECRAWL_API_KEY", "secret": true, "required": false, "provider": "Firecrawl", "help": "检索与抓取一体。", "signup": "https://firecrawl.dev/app/api-keys"},

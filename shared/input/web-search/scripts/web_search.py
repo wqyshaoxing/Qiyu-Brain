@@ -45,7 +45,6 @@ PROVIDERS = {
     "searxng": {"key": "SEARXNG_URL", "cost": "self-hosted", "stability": "stable", "interval": 1.0},
     "exa": {"key": "EXA_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
     "tavily": {"key": "TAVILY_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
-    "brave": {"key": "BRAVE_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.1},
     "serper": {"key": "SERPER_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
     "jina": {"key": "JINA_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
     "firecrawl": {"key": "FIRECRAWL_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
@@ -57,7 +56,7 @@ PROVIDERS = {
     "langsearch": {"key": "LANGSEARCH_API_KEY", "cost": "paid", "stability": "unverified", "interval": 1.0},
 }
 
-ENV_KEYS = ["SEARXNG_URL", "EXA_API_KEY", "TAVILY_API_KEY", "BRAVE_API_KEY", "SERPER_API_KEY",
+ENV_KEYS = ["SEARXNG_URL", "EXA_API_KEY", "TAVILY_API_KEY", "SERPER_API_KEY",
             "JINA_API_KEY", "FIRECRAWL_API_KEY", "LINKUP_API_KEY", "VALYU_API_KEY",
             "GOOGLE_CSE_KEY", "GOOGLE_CSE_CX", "BOCHA_API_KEY", "LANGSEARCH_API_KEY"]
 
@@ -250,25 +249,6 @@ def p_tavily(query: str, limit: int, engine: str = "") -> list[dict]:
             for item in data.get("results", [])]
 
 
-def p_brave(query: str, limit: int, engine: str = "") -> list[dict]:
-    key = os.environ.get("BRAVE_API_KEY")
-    if not key:
-        raise RuntimeError("skipped: BRAVE_API_KEY not set")
-    params = {"q": query, "count": min(limit, 20)}
-    status, body, _ = fetch("https://api.search.brave.com/res/v1/web/search?"
-                            + urllib.parse.urlencode(params), provider="brave",
-                            headers={"X-Subscription-Token": key, "Accept": "application/json"})
-    if status != 200 or not body:
-        raise RuntimeError(f"brave HTTP {status}")
-    data = json.loads(body.decode("utf-8", "replace"))
-    out = []
-    for item in (data.get("web") or {}).get("results", []):
-        out.append(result(title=item.get("title", ""), url=item.get("url", ""),
-                          snippet=item.get("description", ""),
-                          engine="brave", source="brave"))
-    return out
-
-
 def p_serper(query: str, limit: int, engine: str = "") -> list[dict]:
     key = os.environ.get("SERPER_API_KEY")
     if not key:
@@ -457,7 +437,7 @@ FETCHERS = {
     "duckduckgo": p_duckduckgo, "wikipedia": p_wikipedia, "baidu": p_baidu,
     "hn": p_hn, "stackexchange": p_stackexchange,
     "searxng": p_searxng, "exa": p_exa, "tavily": p_tavily,
-    "brave": p_brave, "serper": p_serper, "jina": p_jina,
+    "serper": p_serper, "jina": p_jina,
     "firecrawl": p_firecrawl, "linkup": p_linkup, "valyu": p_valyu,
     "google_cse": p_google_cse, "bocha": p_bocha,
     "langsearch": p_langsearch,
