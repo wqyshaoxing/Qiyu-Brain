@@ -13,7 +13,7 @@
 | StackExchange API | 技术问答 | 无 | 无限 | 200，JSON | ✅ 可用 |
 | Exa | 神经检索 | `EXA_API_KEY` | **$10/月 + 注册 $10**，无需绑卡【官网】 | 402→ok | 🔑 已接入 |
 | Tavily | AI 检索 | `TAVILY_API_KEY` | 1,000 credits/月【汇总】 | 401→ok | 🔑 已接入 |
-| Serper | Google SERP | `SERPER_API_KEY` | **2,500 次一次性，免绑卡**【官网】 | 403 | 🔑 已接入 |
+| **Serper** | Google SERP | — | 2,500 次一次性，免绑卡【官网】 | 403→ok 实测可用 | ⏸ 暂缓（试过后不用） |
 | Firecrawl | 检索+抓取 | `FIRECRAWL_API_KEY` | **1,000 credits/月 ≈ 500 次搜索**【官网】 | 500 | 🔑 已接入 |
 | Google Programmable Search | Google 索引 | `GOOGLE_CSE_KEY` + `GOOGLE_CSE_CX` | **100 次/天**【官网】 | 403 | 🔑 已接入 |
 | Linkup | 欧洲索引 | `LINKUP_API_KEY` | $20 注册额度（企业邮箱）【官网】 | 400 | 🔑 已接入 |
@@ -22,7 +22,7 @@
 | 博查 Bocha | 中文检索 | `BOCHA_API_KEY` | 试用 1,000 次 / 3 个月【汇总】 | 400 | 🔑 已接入，结构待验证 |
 | Jina Search | 神经检索 | `JINA_API_KEY` | 有免费 token 额度【未核实】 | 403 | 🔑 已接入 |
 | SearXNG（自建） | 元搜索 | `SEARXNG_URL` | 自建即免费 | 公共实例全 429/403 | 🏠 已接入 |
-| Brave Search | 独立索引 | `BRAVE_API_KEY` | **$20/月**免费调用，预付制无订阅【官网】 | 422 | 🔑 已接入（已恢复） |
+| Brave Search | 独立索引 | `BRAVE_API_KEY` | **$20/月**免费调用，预付制无订阅【官网】 | 422 | 🔑 已接入，待填（开通需支付方式验证） |
 | **Kagi** | 付费搜索 | — | **无免费额度**，$12/1k requests【官网】 | 401 | ❌ 已移除 |
 | **智谱 web_search** | 中文检索 | — | **无免费额度**【汇总】 | 401 | ❌ 已移除 |
 | Bing Web Search | 通用网页 | — | — | 401，官方已退役 | ⛔ 不纳入 |
@@ -55,7 +55,11 @@
 - **智谱 web_search**：[2026-03 搜索 API 价格汇总](https://hebangwen.github.io/2026/03/04/search-api-summary/) 标注无免费额度。
 
 2026-10-22 曾按用户要求暂缓 **Brave Search**，同日恢复。它有 $20/月 免费额度，是当前付费源里额度最高的一个。
-恢复方式：`PROVIDERS` / `FETCHERS` / `ENV_KEYS` 各加一条，补回 `p_brave()`（GET `api.search.brave.com/res/v1/web/search`，头 `X-Subscription-Token`）。
+当前未填：开通需要绑定支付方式验证，用户暂不填。适配器保留，填 key 即可用。
+
+2026-10-22 暂缓 **Serper**：用户实测后决定不用。适配器已删（PROVIDERS / FETCHERS / 函数 / ENV_KEYS 四处），
+`.env` 与 `.env.example` 已清理。恢复方式与 Brave 相同，GET `google.serper.dev/search`，头 `X-API-KEY`。
+注意它与 Google CSE 功能重复，两者取其一即可。
 
 ## 三条选型原则
 
