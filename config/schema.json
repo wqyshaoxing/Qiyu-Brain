@@ -10,7 +10,6 @@
       "skills": ["shared/input/search-connectors"],
       "keys": [
         {"name": "CROSSREF_MAILTO", "secret": false, "required": false, "provider": "Crossref", "help": "填邮箱进礼貌池，限流更宽松。无需注册。", "signup": "https://www.crossref.org/documentation/retrieve-metadata/rest-api/"},
-        {"name": "SEMANTIC_SCHOLAR_API_KEY", "secret": true, "required": false, "provider": "Semantic Scholar", "help": "不填则匿名限流。", "signup": "https://www.semanticscholar.org/product/api"},
         {"name": "PUBMED_API_KEY", "secret": true, "required": false, "provider": "PubMed", "help": "不填按 3 次/秒，通常够用。", "signup": "https://www.ncbi.nlm.nih.gov/account/"}
       ]
     },

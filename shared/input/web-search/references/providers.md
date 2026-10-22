@@ -17,9 +17,8 @@
 | Firecrawl | 检索+抓取 | `FIRECRAWL_API_KEY` | **1,000 credits/月 ≈ 500 次搜索**【官网】 | 500 | 🔑 已接入 |
 | Google Programmable Search | Google 索引 | `GOOGLE_CSE_KEY` + `GOOGLE_CSE_CX` | **100 次/天**【官网】 | 403 | 🔑 已接入 |
 | Linkup | 欧洲索引 | `LINKUP_API_KEY` | $20 注册额度（企业邮箱）【官网】 | 400 | 🔑 已接入 |
-| Valyu | 科研/金融 | `VALYU_API_KEY` | $10 注册额度，12 个月有效【官网】 | 401 | 🔑 已接入 |
-| LangSearch | 中英检索 | `LANGSEARCH_API_KEY` | **完全免费的免费计划**，按日 token 额度【官网】 | 400 | 🔑 已接入，结构待验证 |
-| 博查 Bocha | 中文检索 | `BOCHA_API_KEY` | 试用 1,000 次 / 3 个月【汇总】 | 400 | 🔑 已接入，结构待验证 |
+| LangSearch | 中英检索 | `LANGSEARCH_API_KEY` | **完全免费的免费计划**，按日 token 额度【官网】 | 200，中文结果良好 | ✅ 已接入，实测通过 |
+| **博查 Bocha** | 中文检索 | — | 试用 1,000 次 / 3 个月，但账号额度未生效【汇总】 | 403 `not enough money or package quota` | ❌ 已移除 |
 | Jina Search | 神经检索 | `JINA_API_KEY` | 有免费 token 额度【未核实】 | 403 | 🔑 已接入 |
 | SearXNG（自建） | 元搜索 | `SEARXNG_URL` | 自建即免费 | 公共实例全 429/403 | 🏠 已接入 |
 | Brave Search | 独立索引 | `BRAVE_API_KEY` | **$20/月**免费调用，预付制无订阅【官网】 | 422 | 🔑 已接入，待填（开通需支付方式验证） |
@@ -60,6 +59,16 @@
 2026-10-22 暂缓 **Serper**：用户实测后决定不用。适配器已删（PROVIDERS / FETCHERS / 函数 / ENV_KEYS 四处），
 `.env` 与 `.env.example` 已清理。恢复方式与 Brave 相同，GET `google.serper.dev/search`，头 `X-API-KEY`。
 注意它与 Google CSE 功能重复，两者取其一即可。
+
+2026-10-22 移除 **博查 Bocha**：key 有效（换鉴权方式会返回 401 Invalid API KEY），但账号返回
+`403 You do not have enough money or package quota`——试用额度未生效。API 本身可用，等额度到位可照原样接回。
+同日按用户要求移除 **Valyu**（$10 注册额度，属于垂直科研/金融数据，与现有学术检索重叠）。
+
+2026-10-22 移除 **SEMANTIC_SCHOLAR_API_KEY** 配置项（属 search-connectors）：匿名实测 3/3 全部 429，
+共享池已饱和。源保留，但不在默认集合内，失败时会明确报 429 原因。
+
+2026-10-22 起：**默认只跑免 key 源**。不传 `--providers` 时只运行 duckduckgo / wikipedia / hn / stackexchange；
+付费源必须显式点名。这条同时写进 CONVENTIONS 第 10 条。
 
 ## 三条选型原则
 

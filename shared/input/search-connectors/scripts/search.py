@@ -38,7 +38,7 @@ PROVIDERS = {
     "crossref": {"key": None, "interval": 1.0, "cost": "free"},
     "openalex": {"key": None, "interval": 0.2, "cost": "free"},
     "pubmed": {"key": "PUBMED_API_KEY", "interval": 0.4, "cost": "free"},
-    "semantic_scholar": {"key": "SEMANTIC_SCHOLAR_API_KEY", "interval": 1.2, "cost": "free-with-key"},
+    "semantic_scholar": {"key": None, "interval": 1.2, "cost": "free", "retry_429": False},
     "exa": {"key": "EXA_API_KEY", "interval": 1.0, "cost": "paid"},
 }
 
@@ -94,7 +94,8 @@ def fetch(url: str, *, data: bytes | None = None, headers: dict | None = None,
                 return resp.status, body, attempt
         except urllib.error.HTTPError as exc:
             _last_call[provider] = time.time()
-            if exc.code in (429, 500, 502, 503, 504) and attempt < MAX_ATTEMPTS:
+            retryable = (exc.code != 429) or PROVIDERS.get(provider, {}).get("retry_429", True)
+            if exc.code in (429, 500, 502, 503, 504) and attempt < MAX_ATTEMPTS and retryable:
                 time.sleep(2 ** attempt)
                 last_error = exc
                 continue
@@ -259,13 +260,19 @@ def p_pubmed(query: str, limit: int) -> list[dict]:
 
 
 def p_semantic_scholar(query: str, limit: int) -> list[dict]:
+    """Anonymous access works; a key only raises the rate limit."""
     key = os.environ.get("SEMANTIC_SCHOLAR_API_KEY")
-    if not key:
-        raise RuntimeError("skipped: SEMANTIC_SCHOLAR_API_KEY not set")
     params = {"query": query, "limit": min(limit, 100),
               "fields": "title,authors,year,venue,externalIds,url"}
     url = "https://api.semanticscholar.org/graph/v1/paper/search?" + urllib.parse.urlencode(params)
-    status, body, _ = fetch(url, provider="semantic_scholar", headers={"x-api-key": key})
+    headers = {"x-api-key": key} if key else {}
+    status, body, _ = fetch(url, provider="semantic_scholar", headers=headers)
+    if status == 429:
+        raise RuntimeError(
+            "semantic_scholar HTTP 429: anonymous rate limit (shared pool is saturated; "
+            "measured 3/3 attempts). A key is required for stable use and is intentionally "
+            "not configured. Use arxiv / crossref / openalex instead."
+        )
     if status != 200 or not body:
         raise RuntimeError(f"semantic_scholar HTTP {status}")
     out = []

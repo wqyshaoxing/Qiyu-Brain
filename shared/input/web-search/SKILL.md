@@ -61,7 +61,8 @@ A backend that cannot run is recorded with its reason. Silent substitution is no
 ## Workflow
 
 1. `--list-providers`, then `--plan` to see which backends will actually run and which keys are missing.
-2. Start with `--providers free` (DuckDuckGo + Wikipedia). Add keyed engines only when coverage justifies the cost.
+2. Run with no `--providers` flag: the default is `free` — DuckDuckGo, Wikipedia, HN, StackExchange. Paid backends must be named explicitly; they are never enabled by default.
+3. Add keyed engines only when coverage justifies the cost.
 3. Run with an explicit limit. Defaults are deliberately small; more rows rarely mean more information.
 4. Read `search-log.json` before the matrix: `skipped` (no key), `empty` (ran, nothing), `failed` (challenge, block, parse change) are three different facts.
 5. Deduplicate in two passes: normalized URL, then identical normalized title. Regional mirrors (`in.` / `za.` / `au.` of the same article) share a title but not a URL, so the title pass merges them and keeps the others in `alt_urls`. Blocked pages (WAF, 403, captcha interstitials) are dropped and counted as `filtered_noise` — dropped, never silently.

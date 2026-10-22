@@ -49,18 +49,17 @@ PROVIDERS = {
     "jina": {"key": "JINA_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
     "firecrawl": {"key": "FIRECRAWL_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
     "linkup": {"key": "LINKUP_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
-    "valyu": {"key": "VALYU_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
     "google_cse": {"key": "GOOGLE_CSE_KEY", "key2": "GOOGLE_CSE_CX",
                    "cost": "paid", "stability": "stable", "interval": 1.0},
-    "bocha": {"key": "BOCHA_API_KEY", "cost": "paid", "stability": "unverified", "interval": 1.0},
-    "langsearch": {"key": "LANGSEARCH_API_KEY", "cost": "paid", "stability": "unverified", "interval": 1.0},
+    "langsearch": {"key": "LANGSEARCH_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
 }
 
 ENV_KEYS = ["SEARXNG_URL", "EXA_API_KEY", "TAVILY_API_KEY", "BRAVE_API_KEY",
-            "JINA_API_KEY", "FIRECRAWL_API_KEY", "LINKUP_API_KEY", "VALYU_API_KEY",
-            "GOOGLE_CSE_KEY", "GOOGLE_CSE_CX", "BOCHA_API_KEY", "LANGSEARCH_API_KEY"]
+            "JINA_API_KEY", "FIRECRAWL_API_KEY", "LINKUP_API_KEY",
+            "GOOGLE_CSE_KEY", "GOOGLE_CSE_CX", "LANGSEARCH_API_KEY"]
 
 _last_call: dict[str, float] = {}
+LAST_ERROR: dict[str, str] = {}
 
 
 def load_env() -> None:
@@ -100,6 +99,10 @@ def fetch(url: str, *, data: bytes | None = None, headers: dict | None = None,
                 return resp.status, body, attempt
         except urllib.error.HTTPError as exc:
             _last_call[provider] = time.time()
+            try:
+                LAST_ERROR[provider] = exc.read()[:300].decode("utf-8", "replace")
+            except Exception:  # noqa: BLE001 - body may be unreadable
+                pass
             if exc.code in (429, 500, 502, 503, 504) and attempt < MAX_ATTEMPTS:
                 time.sleep(2 ** attempt)
                 continue
@@ -355,21 +358,6 @@ def p_linkup(query: str, limit: int, engine: str = "") -> list[dict]:
             for r in (data.get("results") or [])][:limit]
 
 
-def p_valyu(query: str, limit: int, engine: str = "") -> list[dict]:
-    key = os.environ.get("VALYU_API_KEY")
-    if not key:
-        raise RuntimeError("skipped: VALYU_API_KEY not set")
-    payload = json.dumps({"query": query, "max_num_results": min(limit, 10)}).encode()
-    status, body, _ = fetch("https://api.valyu.ai/v1/search", data=payload, provider="valyu",
-                            headers={"Content-Type": "application/json", "x-api-key": key})
-    if status != 200 or not body:
-        raise RuntimeError(f"valyu HTTP {status}")
-    data = json.loads(body.decode("utf-8", "replace"))
-    return [result(title=r.get("title", ""), url=r.get("url", ""),
-                   snippet=r.get("content", ""), engine="valyu", source="valyu")
-            for r in (data.get("results") or [])][:limit]
-
-
 def p_google_cse(query: str, limit: int, engine: str = "") -> list[dict]:
     key = os.environ.get("GOOGLE_CSE_KEY")
     cx = os.environ.get("GOOGLE_CSE_CX")
@@ -392,27 +380,6 @@ def _nested(obj, *path):
             return None
         obj = obj.get(key)
     return obj
-
-
-def p_bocha(query: str, limit: int, engine: str = "") -> list[dict]:
-    key = os.environ.get("BOCHA_API_KEY")
-    if not key:
-        raise RuntimeError("skipped: BOCHA_API_KEY not set")
-    payload = json.dumps({"query": query, "count": min(limit, 10),
-                          "summary": False}).encode()
-    status, body, _ = fetch("https://api.bochaai.com/v1/web-search", data=payload, provider="bocha",
-                            headers={"Content-Type": "application/json",
-                                     "Authorization": f"Bearer {key}"})
-    if status != 200 or not body:
-        raise RuntimeError(f"bocha HTTP {status}")
-    data = json.loads(body.decode("utf-8", "replace"))
-    rows = (_nested(data, "data", "webPages", "value")
-            or _nested(data, "webPages", "value") or [])
-    if not rows:
-        raise RuntimeError("bocha parsed 0 results; body: " + body[:200].decode("utf-8", "replace"))
-    return [result(title=r.get("name", ""), url=r.get("url", ""),
-                   snippet=r.get("snippet", ""), engine="bocha", source="bocha")
-            for r in rows][:limit]
 
 
 def p_langsearch(query: str, limit: int, engine: str = "") -> list[dict]:
@@ -442,8 +409,8 @@ FETCHERS = {
     "hn": p_hn, "stackexchange": p_stackexchange,
     "searxng": p_searxng, "exa": p_exa, "tavily": p_tavily,
     "brave": p_brave, "jina": p_jina,
-    "firecrawl": p_firecrawl, "linkup": p_linkup, "valyu": p_valyu,
-    "google_cse": p_google_cse, "bocha": p_bocha,
+    "firecrawl": p_firecrawl, "linkup": p_linkup,
+    "google_cse": p_google_cse,
     "langsearch": p_langsearch,
 }
 
@@ -587,8 +554,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Multi-provider web search.")
     parser.add_argument("--query", help="检索式")
     parser.add_argument("--out", help="产物目录")
-    parser.add_argument("--providers", default="duckduckgo,wikipedia",
-                        help="逗号分隔，或 all / free")
+    parser.add_argument("--providers", default="free",
+                        help="逗号分隔；默认 free（仅免 key 源）。付费源必须显式指定")
     parser.add_argument("--limit", type=int, default=10)
     parser.add_argument("--engine", default="", help="searxng 的 engines 参数，如 baidu,google")
     parser.add_argument("--plan", action="store_true")
@@ -620,8 +587,11 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"{name:14} {label:26} {'ok':8} {len(got)} 条")
             except RuntimeError as exc:
                 msg = str(exc)
+                detail = LAST_ERROR.get(name)
+                if detail and "HTTP" in msg:
+                    msg = f"{msg} | {detail}"
                 status = "skip" if msg.startswith("skipped") else "fail"
-                print(f"{name:14} {label:26} {status:8} {msg[:90]}")
+                print(f"{name:14} {label:26} {status:8} {msg[:110]}")
             except Exception as exc:  # noqa: BLE001
                 print(f"{name:14} {label:26} {'fail':8} {type(exc).__name__}: {str(exc)[:70]}")
         return 0
@@ -689,6 +659,9 @@ def main(argv: list[str] | None = None) -> int:
             entry = {"name": name, "status": status, "hits": len(got)}
         except RuntimeError as exc:
             message = str(exc)
+            detail = LAST_ERROR.get(name)
+            if detail and "HTTP" in message:
+                message = f"{message} | {detail}"
             entry = {"name": name, "status": "skipped" if message.startswith("skipped") else "failed",
                      "error": message, "hits": 0}
             got = []

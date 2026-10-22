@@ -30,9 +30,11 @@ One interface over arXiv, Crossref, OpenAlex, PubMed, Semantic Scholar, and Exa.
 ## Workflow
 
 1. `--plan` first: it prints the providers that will run, which keys are present or missing, and the output paths, without touching the network.
-2. Write the query and its intent. If the query is a question, split it into 2–3 query variants rather than one long sentence.
-3. Run with an explicit provider list and limit. Defaults are conservative: max 20 results per provider, 1 request per second per provider.
-4. Read `search-log.json` before trusting the matrix. Failed or rate-limited providers are coverage gaps, not empty results.
+2. Default sources are the three that need no key at all: `arxiv`, `crossref`, `openalex`.
+3. `semantic_scholar` exists but is **not** in the default set: anonymous access measured 3/3 HTTP 429 (shared pool saturated). A key raises the limit; it is intentionally not configured here, so expect this source to fail with an explicit 429 message rather than silently returning nothing.
+4. Write the query and its intent. If the query is a question, split it into 2–3 query variants rather than one long sentence.
+5. Run with an explicit provider list and limit. Defaults are conservative: max 20 results per provider, 1 request per second per provider.
+6. Read `search-log.json` before trusting the matrix. Failed or rate-limited providers are coverage gaps, not empty results.
 5. Deduplicate by DOI, then arXiv ID, then normalized title + year. Collisions that cannot be resolved go to the log, never merged silently.
 6. Hand the matrix to the caller; leave screening decisions to it.
 
