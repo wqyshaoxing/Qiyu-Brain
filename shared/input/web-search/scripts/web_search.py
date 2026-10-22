@@ -45,6 +45,7 @@ PROVIDERS = {
     "searxng": {"key": "SEARXNG_URL", "cost": "self-hosted", "stability": "stable", "interval": 1.0},
     "exa": {"key": "EXA_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
     "tavily": {"key": "TAVILY_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
+    "brave": {"key": "BRAVE_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.1},
     "serper": {"key": "SERPER_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
     "jina": {"key": "JINA_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
     "firecrawl": {"key": "FIRECRAWL_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
@@ -56,7 +57,7 @@ PROVIDERS = {
     "langsearch": {"key": "LANGSEARCH_API_KEY", "cost": "paid", "stability": "unverified", "interval": 1.0},
 }
 
-ENV_KEYS = ["SEARXNG_URL", "EXA_API_KEY", "TAVILY_API_KEY", "SERPER_API_KEY",
+ENV_KEYS = ["SEARXNG_URL", "EXA_API_KEY", "TAVILY_API_KEY", "BRAVE_API_KEY", "SERPER_API_KEY",
             "JINA_API_KEY", "FIRECRAWL_API_KEY", "LINKUP_API_KEY", "VALYU_API_KEY",
             "GOOGLE_CSE_KEY", "GOOGLE_CSE_CX", "BOCHA_API_KEY", "LANGSEARCH_API_KEY"]
 
@@ -249,6 +250,25 @@ def p_tavily(query: str, limit: int, engine: str = "") -> list[dict]:
             for item in data.get("results", [])]
 
 
+def p_brave(query: str, limit: int, engine: str = "") -> list[dict]:
+    key = os.environ.get("BRAVE_API_KEY")
+    if not key:
+        raise RuntimeError("skipped: BRAVE_API_KEY not set")
+    params = {"q": query, "count": min(limit, 20)}
+    status, body, _ = fetch("https://api.search.brave.com/res/v1/web/search?"
+                            + urllib.parse.urlencode(params), provider="brave",
+                            headers={"X-Subscription-Token": key, "Accept": "application/json"})
+    if status != 200 or not body:
+        raise RuntimeError(f"brave HTTP {status}")
+    data = json.loads(body.decode("utf-8", "replace"))
+    out = []
+    for item in (data.get("web") or {}).get("results", []):
+        out.append(result(title=item.get("title", ""), url=item.get("url", ""),
+                          snippet=item.get("description", ""),
+                          engine="brave", source="brave"))
+    return out
+
+
 def p_serper(query: str, limit: int, engine: str = "") -> list[dict]:
     key = os.environ.get("SERPER_API_KEY")
     if not key:
@@ -437,7 +457,7 @@ FETCHERS = {
     "duckduckgo": p_duckduckgo, "wikipedia": p_wikipedia, "baidu": p_baidu,
     "hn": p_hn, "stackexchange": p_stackexchange,
     "searxng": p_searxng, "exa": p_exa, "tavily": p_tavily,
-    "serper": p_serper, "jina": p_jina,
+    "brave": p_brave, "serper": p_serper, "jina": p_jina,
     "firecrawl": p_firecrawl, "linkup": p_linkup, "valyu": p_valyu,
     "google_cse": p_google_cse, "bocha": p_bocha,
     "langsearch": p_langsearch,
@@ -498,8 +518,17 @@ def dedupe(rows: list[dict]) -> tuple[list[dict], dict]:
                 first["snippet"] = row["snippet"]
             continue
 
-        if len(ntitle) >= 20 and ntitle in by_title:
-            first = kept[by_title[ntitle]]
+        match_key = by_title.get(ntitle) if len(ntitle) >= 20 else None
+        if match_key is None and len(ntitle) >= 30 and row["title"].rstrip().endswith(("...", "…")):
+            # Engines truncate titles; a truncated title that prefixes a known one
+            # is the same result, not a different page.
+            for known_title, known_key in by_title.items():
+                if len(known_title) >= 30 and (known_title.startswith(ntitle)
+                                               or ntitle.startswith(known_title)):
+                    match_key = known_key
+                    break
+        if match_key:
+            first = kept[match_key]
             first.setdefault("alternate_urls", []).append(row["url"])
             first["sources"] = sorted(set(first.get("sources", [first["source"]]) + [row["source"]]))
             mirror_merges += 1

@@ -22,7 +22,7 @@
 | 博查 Bocha | 中文检索 | `BOCHA_API_KEY` | 试用 1,000 次 / 3 个月【汇总】 | 400 | 🔑 已接入，结构待验证 |
 | Jina Search | 神经检索 | `JINA_API_KEY` | 有免费 token 额度【未核实】 | 403 | 🔑 已接入 |
 | SearXNG（自建） | 元搜索 | `SEARXNG_URL` | 自建即免费 | 公共实例全 429/403 | 🏠 已接入 |
-| Brave Search | 独立索引 | — | **$20/月**免费调用，预付制无订阅【官网】 | 422 | ⏸ 暂缓（按用户要求） |
+| Brave Search | 独立索引 | `BRAVE_API_KEY` | **$20/月**免费调用，预付制无订阅【官网】 | 422 | 🔑 已接入（已恢复） |
 | **Kagi** | 付费搜索 | — | **无免费额度**，$12/1k requests【官网】 | 401 | ❌ 已移除 |
 | **智谱 web_search** | 中文检索 | — | **无免费额度**【汇总】 | 401 | ❌ 已移除 |
 | Bing Web Search | 通用网页 | — | — | 401，官方已退役 | ⛔ 不纳入 |
@@ -54,9 +54,8 @@
 - **Kagi**：官网 [api/pricing](https://kagi.com/api/pricing) 写明 $12 / 1k requests，无免费层。
 - **智谱 web_search**：[2026-03 搜索 API 价格汇总](https://hebangwen.github.io/2026/03/04/search-api-summary/) 标注无免费额度。
 
-2026-10-22 按用户要求暂缓 **Brave Search**：有 $20/月 免费额度，并非无额度。代码、`.env.example`、`config/schema.json` 三处已删；`.env` 里若残留 `BRAVE_API_KEY` 不会被读取。
-
-恢复方法（约 20 行）：`PROVIDERS` 加 `"brave": {"key": "BRAVE_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.1}`；`FETCHERS` 加 `"brave": p_brave`；补回 `p_brave()`（GET `api.search.brave.com/res/v1/web/search`，头 `X-Subscription-Token`）；`ENV_KEYS` 加回 `BRAVE_API_KEY`。
+2026-10-22 曾按用户要求暂缓 **Brave Search**，同日恢复。它有 $20/月 免费额度，是当前付费源里额度最高的一个。
+恢复方式：`PROVIDERS` / `FETCHERS` / `ENV_KEYS` 各加一条，补回 `p_brave()`（GET `api.search.brave.com/res/v1/web/search`，头 `X-Subscription-Token`）。
 
 ## 三条选型原则
 
