@@ -4,7 +4,17 @@
 
 ## 现状
 
-只有领域骨架，**未建阶段目录**。等第一批技能设计定了再建，避免空壳。
+已落第一批两个技能：入口分诊（input）与交付前红旗检查（verify）。这两个是安全底线，先于任何"计划"类技能。
+
+| 阶段 | 技能 | 一句话 |
+| --- | --- | --- |
+| input | [livebetter-context-intake](input/livebetter-context-intake/SKILL.md) | 目标改成可观察、基线改成可计数；红旗先问，命中即停止并转就医 |
+| output | [livebetter-plan-draft](output/livebetter-plan-draft/SKILL.md) | 从半量起步、有递增规则、有停止条件、有复查日期；不碰药物与剂量 |
+| verify | [livebetter-red-flag-check](verify/livebetter-red-flag-check/SKILL.md) | 交付前重筛急症与禁忌，缺停止条件就拦下 |
+
+依赖：`gateway-router → livebetter-context-intake → livebetter-plan-draft → livebetter-red-flag-check`。
+
+**尚未建**：reasoning（风险收益权衡、证据分级）。计划与验收已就位，但"为什么选这个方案而不是另一个"还没有独立技能承载。
 
 ## 候选技能
 

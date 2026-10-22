@@ -535,7 +535,8 @@ def main() -> int:
     # Data-flow contract: every consumed role should be produced somewhere,
     # unless it is an external input the caller supplies.
     EXTERNAL_INPUTS = {"user_request", "profile", "raw_brief", "codebase_map",
-                       "fulltext_notes", "sources", "task_contract_input"}
+                       "fulltext_notes", "sources", "task_contract_input",
+                       "life_request"}
     produced = {role for info in by_name.values() for role in (info.get("produces") or [])}
     for name, info in by_name.items():
         for role in info.get("consumes") or []:

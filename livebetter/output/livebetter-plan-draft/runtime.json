@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "plan_draft",
+      "kind": "markdown",
+      "required": true,
+      "note": "首行免责声明；逐条可核验的行动、递增规则、停止条件、复查日期；不得出现药物、补剂或剂量。"
+    },
+    {
+      "role": "plan_metrics",
+      "kind": "csv",
+      "required": true,
+      "note": "一个主指标 + 1-2 个辅助指标、记录频率、空行待填；指标必须与基线口径一致。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "缺基线：停下索取，不得凭猜测定强度。",
+    "用户索要药物或剂量：拒绝并说明超出本技能范围，转 red-flag-check 或临床医生。",
+    "用户要求更快：缩短复查周期，不压缩安全边际。"
+  ],
+  "todo": [
+    "把递增规则与停止条件做成可校验的模板，减少自由发挥。",
+    "支持从 plan_metrics 的回收数据生成复查报告（下一版）。"
+  ]
+}

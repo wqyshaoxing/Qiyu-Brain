@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "red_flag_screen",
+      "kind": "json",
+      "required": true,
+      "note": "逐个红旗组的提问与回答、计划层面禁忌匹配、结论 pass/block/clinician；未回答要显式记录。"
+    },
+    {
+      "role": "escalation_note",
+      "kind": "markdown",
+      "required": true,
+      "note": "block/clinician 时给出：要说什么、看哪个科、带什么材料；emergency 时只给急救指引，不含计划。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "急症筛查阳性：只出升级说明，不给计划文本，不给安慰性判断。",
+    "用户要求跳过检查：拒绝，并记录『已要求跳过、已拒绝』。",
+    "禁忌不确定：按 clinician 处理，不按 pass 处理。"
+  ],
+  "todo": [
+    "把红旗清单做成可机读 JSON，供将来脚本化筛查。",
+    "补充常见补剂与处方药的相互作用清单（只做提示，不给剂量建议）。"
+  ]
+}

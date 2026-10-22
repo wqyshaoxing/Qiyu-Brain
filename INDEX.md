@@ -36,6 +36,16 @@
 
 ## livebetter
 
+| 你可能会说 | 阶段 | 技能 | 主要产出 |
+| --- | --- | --- | --- |
+| 我想改善睡眠/体重/精力，但不知道从哪开始 | input | [livebetter-context-intake](livebetter/input/livebetter-context-intake/SKILL.md) | life_context、triage_result |
+| 帮我定一个能坚持的作息/运动计划 | output | [livebetter-plan-draft](livebetter/output/livebetter-plan-draft/SKILL.md) | plan_draft、plan_metrics |
+| 这个计划对我安全吗 / 我这种情况能不能做 | verify | [livebetter-red-flag-check](livebetter/verify/livebetter-red-flag-check/SKILL.md) | red_flag_screen、escalation_note |
+
+命红旗时只给就医指引，不生成计划。
+
+## livebetter
+
 技能待落地，见 [领域说明](livebetter/README.md)。候选意图：目标与症状澄清、指南与证据检索、风险收益权衡、计划草案、就医红旗检查。
 
 ## 跨领域

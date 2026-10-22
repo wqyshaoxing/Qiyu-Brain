@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "life_context",
+      "kind": "json",
+      "required": true,
+      "note": "可观察目标、可计数基线、约束、既往尝试、分诊结论；不含无关高敏信息。"
+    },
+    {
+      "role": "triage_result",
+      "kind": "markdown",
+      "required": true,
+      "note": "首行免责声明；结论为 emergency / clinician / self-manage 之一，附理由；emergency 必须给急救号码与要说的话。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "出现红旗：停止其它一切，只给升级就医指引，不得权衡概率。",
+    "用户拒答筛查：说明没有答案无法给计划，只能给一般安全信息。",
+    "问题本质是医学疑问：转 clinician，不解释症状。"
+  ],
+  "todo": [
+    "把红旗清单按成人/儿童/孕产拆分到 references/red-flags.md，并标注适用人群。",
+    "确定是否支持多语言急救脚本（不同国家急救号码不同）。"
+  ]
+}
