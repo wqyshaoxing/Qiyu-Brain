@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "figure_source",
+      "kind": "directory",
+      "required": true,
+      "note": "可重新生成图的全部材料：绘图脚本或 spec、数据文件、参数与随机种子。"
+    },
+    {
+      "role": "figure_preview",
+      "kind": "png",
+      "required": true,
+      "note": "按最终印刷尺寸渲染；不得只提供放大预览。"
+    },
+    {
+      "role": "figure_qa",
+      "kind": "markdown",
+      "required": true,
+      "note": "图要证明的论断、实际检查项、未解决假设、示意图与实测几何的区分。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "缺原始数据：停下并说明，不得按图注反推数值。",
+    "机制不确定：用虚线标出并在 QA 中说明，不得悄悄省略。",
+    "最终尺寸下不可读：改版式，不要只调字号。"
+  ],
+  "todo": [
+    "接入 BoomSkills 的 build_figure.py 作为机制图的确定性渲染器（shared 层引用，不复制）。",
+    "增加数据完整性检查：图上的数值与数据文件逐点比对。"
+  ]
+}

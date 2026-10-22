@@ -10,7 +10,7 @@
       "note": "纳排标准、时间范围、可复现查询串；标准必须写在检索之前。"
     },
     {
-      "role": "literature_matrix",
+      "role": "result_matrix",
       "kind": "csv",
       "required": true,
       "note": "每条含标识符、来源、年份、证据层级、去重键、筛选结论；不得有无标识符的行。"

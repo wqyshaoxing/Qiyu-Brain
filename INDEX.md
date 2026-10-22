@@ -18,6 +18,8 @@
 | 帮我查一下这个方向有哪些工作 / 建个文献矩阵 | input | [literature-search](academic-research/input/literature-search/SKILL.md) | query_plan、literature_matrix、search_log |
 | 这些文献互相矛盾吗 / 我的论断有证据吗 | reasoning | [evidence-synthesis](academic-research/reasoning/evidence-synthesis/SKILL.md) | evidence_map、contradiction_log |
 | 帮我写引言/方法/讨论 | output | [paper-draft](academic-research/output/paper-draft/SKILL.md) | draft、claim_index |
+| 帮我翻译成中/英文，别译走意思 | output | [zh-en-translation](academic-research/output/zh-en-translation/SKILL.md) | translated_draft、terminology_map、qa_record |
+| 做一张能投出去的图 / 机制示意图 | output | [scientific-figure](academic-research/output/scientific-figure/SKILL.md) | figure_source、figure_preview、figure_qa |
 | 投稿前核一遍引用，别引错 | verify | [citation-evidence-audit](academic-research/verify/citation-evidence-audit/SKILL.md) | audit_report、evidence_bundle |
 
 ## coding

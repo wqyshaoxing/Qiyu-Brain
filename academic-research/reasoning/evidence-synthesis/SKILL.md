@@ -4,7 +4,7 @@ description: Map every candidate claim to supporting, contradicting, and missing
 domain: academic-research
 stage: [reasoning]
 loop_role: transform
-consumes: [literature_matrix, search_log, fulltext_notes]
+consumes: [result_matrix, search_log, fulltext_notes]
 produces: [evidence_map, contradiction_log]
 deps: [literature-search]
 ---

@@ -5,8 +5,8 @@ domain: academic-research
 stage: [input]
 loop_role: entry
 consumes: [task_contract]
-produces: [query_plan, literature_matrix, search_log]
-deps: [task-router]
+produces: [query_plan, result_matrix, search_log]
+deps: [task-router, search-connectors]
 ---
 
 # Literature Search
@@ -30,6 +30,8 @@ Not for: judging novelty, or reading full texts — that is reasoning and later 
 
 ## Requires
 
+`search-connectors` — the matrix comes from that primitive, or from any equivalent retrieval the agent chooses.
+
 `task-router` — this skill assumes a signed task_contract (goal, non-goals, acceptance checks). Without it the search has no scope. Obtain it first if missing; how you do that is the agent's call.
 
 ## Workflow
@@ -46,7 +48,7 @@ Not for: judging novelty, or reading full texts — that is reasoning and later 
 | role | file | checked for |
 | --- | --- | --- |
 | query_plan | `docs/search/query-plan.md` | criteria written before queries; at least one reproducible query string |
-| literature_matrix | `docs/search/literature-matrix.csv` | identifier, source, year, evidence level, dedup key, screen decision |
+| result_matrix | `docs/search/literature-matrix.csv` | identifier, source, year, evidence level, dedup key, screen decision |
 | search_log | `docs/search/search-log.json` | every query with source, hits, errors, rate limits |
 
 ## Completion
