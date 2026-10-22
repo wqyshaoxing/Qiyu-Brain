@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "mode": "hybrid",
+  "actions": [
+    {
+      "name": "import",
+      "script": "scripts/web_api_import.py",
+      "external": true,
+      "requires": [
+        "network"
+      ],
+      "effects": "默认离线校验与预览；--yes 创建/复用云端时间戳 collection，写入条目并上传选定 PDF 到 Zotero Storage",
+      "plan_supported": true
+    },
+    {
+      "name": "check",
+      "script": "scripts/web_api_import.py",
+      "external": true,
+      "requires": [
+        "network"
+      ],
+      "effects": "仅通过 HTTPS 检查目标云端 library 的读取权限，不创建条目、不上传 PDF",
+      "plan_supported": true
+    }
+  ],
+  "artifacts": [
+    {
+      "role": "import_result",
+      "kind": "json",
+      "required": true,
+      "note": "批次、目标 collection、标签、导入和失败条目"
+    },
+    {
+      "role": "import_report",
+      "kind": "markdown",
+      "required": true,
+      "note": "对照清单的实际入库与元数据核验"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "使用原 library、manifest、批次 ID 与已核验元数据重试；按持久化对象 key 和云端内容标签核对/续传。保留所有事件与前次结果；权限/额度/冲突问题不得通过重复创建条目掩盖。"
+  ],
+  "todo": []
+}

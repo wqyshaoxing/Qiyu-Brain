@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "mode": "hybrid",
+  "actions": [
+    {
+      "name": "convert",
+      "script": "scripts/mineru_convert.py",
+      "external": true,
+      "requires": [
+        "network"
+      ],
+      "effects": "将明确选择的 PDF 上传 MinerU，保存 full.md 与资源",
+      "plan_supported": true
+    }
+  ],
+  "artifacts": [
+    {
+      "role": "full_md",
+      "kind": "markdown",
+      "required": true,
+      "note": "非空且经核对的 MinerU 提取文本"
+    },
+    {
+      "role": "extraction_report",
+      "kind": "json",
+      "required": true,
+      "note": "来源 PDF 哈希、提取结果、图片与失败记录"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "保留 PDF 和提取任务信息；恢复令牌/网络后重试。不要用覆盖完整 full.md 的方式重试分析。"
+  ],
+  "todo": []
+}

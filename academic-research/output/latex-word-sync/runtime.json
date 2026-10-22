@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "mode": "hybrid",
+  "actions": [
+    {
+      "name": "manifest",
+      "script": "scripts/build_sync_manifest.py",
+      "external": false,
+      "requires": [],
+      "effects": "读取 LaTeX/DOCX，保存结构与差异清单",
+      "plan_supported": true
+    }
+  ],
+  "artifacts": [
+    {
+      "role": "latex",
+      "kind": "document",
+      "required": true,
+      "note": "同步后的 LaTeX 主稿"
+    },
+    {
+      "role": "word",
+      "kind": "document",
+      "required": true,
+      "note": "可编辑 Word 对应稿"
+    },
+    {
+      "role": "manifest",
+      "kind": "json",
+      "required": true,
+      "note": "双向结构和变更映射"
+    },
+    {
+      "role": "qa",
+      "kind": "markdown",
+      "required": true,
+      "note": "公式、引用、图表和实际渲染核验"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "保存源稿与旧映射，只修复受影响对象；无渲染工具时记录尚未验收的版式。"
+  ],
+  "todo": []
+}
