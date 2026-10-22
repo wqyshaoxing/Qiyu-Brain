@@ -77,6 +77,23 @@ python scripts/validate.py
 5. 在 `INDEX.md` 登记一行，并在 `_eval/` 放至少一个 fixture。
 6. 跑 `validate.py`；有可执行动作时，脚本必须真的存在。
 
+## 打包成插件
+
+```text
+python scripts/build_plugin.py                # 构建 generic / agents / claude
+python scripts/build_plugin.py --check        # 校验 dist/ 完整性
+```
+
+源码是 `domain/stage/skill` 三层，宿主普遍要扁平的 `skills/<name>/`。构建器做三件事：打平目录、把每个技能连同 `scripts/` 与 `references/` 整份复制（保持自包含）、生成带版本与来源 commit 的 `manifest.json`。
+
+| host | 产物布局 | 状态 |
+| --- | --- | --- |
+| `generic` | `skills/` + `manifest.json` | 已验证 |
+| `agents` | `.agents/skills/` + `manifest.json` | 已验证（Codex / skills.sh 风格） |
+| `claude` | `skills/` + `.claude-plugin/plugin.json` | **布局假设，未在真实宿主验证** |
+
+`dist/` 已 gitignore。构建时会扫描并拒绝任何形似密钥的字符串（`sk-`、`tvly-`、`fc-`、`AIza`），也不会复制 `.env`。
+
 ## 与 BoomSkills 的关系
 
 **不重写执行层。** BoomSkills 的 `runs/`、`status`、`finish`、审查哈希绑定已经完整，Qiyu-Brain 复用那套 runtime：
@@ -93,5 +110,6 @@ python scripts/validate.py
 - `third-party/skill-anatomy.md` 记录了 7 个现成搜索 skill 的解剖结论：哪些章节反复出现、哪 6 条值得抄、哪 3 条不抄。
 - third-party 登记 **86 个外部仓库**：47 个已深核（commit + LICENSE + 文件数 + SKILL.md 数量），39 个仅核存在性（`git ls-remote`）。star 数无法核实（`web_fetch` 拒绝非公网 IP）。`provenance.json` 目前为空。
 - `third-party/forum-signals.md` 记录了论坛线索与五条结论，仅到标题级——帖子正文未能读取。
+- `scripts/build_plugin.py` 可把源码树打成 `generic` / `agents` / `claude` 三种宿主包，产物自包含、无密钥；`claude` 的布局尚未在真实宿主验证。
 - livebetter 只有领域边界与安全契约，未建阶段目录。
 - 仓库已 `git init` 并推送到 `origin/main`。

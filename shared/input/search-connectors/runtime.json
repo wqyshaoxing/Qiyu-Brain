@@ -9,7 +9,6 @@
       "requires": ["network"],
       "optional_requires": [
         "EXA_API_KEY",
-        "SEMANTIC_SCHOLAR_API_KEY",
         "PUBMED_API_KEY",
         "CROSSREF_MAILTO"
       ],

@@ -24,11 +24,9 @@
         {"name": "JINA_API_KEY", "secret": true, "required": false, "provider": "Jina", "help": "s.jina.ai 检索，返回带正文的 JSON。注意 r.jina.ai 抓正文免 key，本项只针对检索。", "signup": "https://jina.ai/api-dashboard/"},
         {"name": "FIRECRAWL_API_KEY", "secret": true, "required": false, "provider": "Firecrawl", "help": "检索与抓取一体。", "signup": "https://firecrawl.dev/app/api-keys"},
         {"name": "LINKUP_API_KEY", "secret": true, "required": false, "provider": "Linkup", "help": "欧洲索引，按查询计费。", "signup": "https://app.linkup.so"},
-        {"name": "VALYU_API_KEY", "secret": true, "required": false, "provider": "Valyu", "help": "科研与金融数据检索。", "signup": "https://platform.valyu.ai"},
         {"name": "GOOGLE_CSE_KEY", "secret": true, "required": false, "provider": "Google Programmable Search", "help": "需要同时填 GOOGLE_CSE_CX。有每日免费额度。", "signup": "https://programmablesearchengine.google.com/"},
         {"name": "GOOGLE_CSE_CX", "secret": false, "required": false, "provider": "Google Programmable Search", "help": "搜索引擎 ID（cx），与 Key 成对出现。", "signup": "https://programmablesearchengine.google.com/"},
-        {"name": "BOCHA_API_KEY", "secret": true, "required": false, "provider": "博查", "help": "中文检索，国内直连，试用 1000 次/3 个月。响应结构待验证。", "signup": "https://open.bochaai.com"},
-        {"name": "LANGSEARCH_API_KEY", "secret": true, "required": false, "provider": "LangSearch", "help": "中英双语，有完全免费的免费计划。响应结构待验证。", "signup": "https://langsearch.com"},
+        {"name": "LANGSEARCH_API_KEY", "secret": true, "required": false, "provider": "LangSearch", "help": "中英双语，有完全免费的免费计划。已实测可用。", "signup": "https://langsearch.com"},
         {"name": "SEARXNG_URL", "secret": false, "required": false, "provider": "SearXNG", "help": "自建实例地址，如 http://127.0.0.1:8080。公共实例普遍禁用 JSON，因此只认自建。可间接覆盖百度/必应/Google。", "signup": "https://docs.searxng.org/admin/installation.html"}
       ]
     },

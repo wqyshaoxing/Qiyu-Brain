@@ -11,7 +11,7 @@ deps: []
 
 # Web Search
 
-One entry point over eight backends: DuckDuckGo, Wikipedia, Hacker News, StackExchange, Baidu, SearXNG, Exa, Tavily, Brave, and Serper. Free backends run without keys; paid backends are opt-in and skipped — not failed — when their key is absent.
+One entry point over the backends catalogued in [references/providers.md](references/providers.md): four free ones (DuckDuckGo, Wikipedia, Hacker News, StackExchange), keyed ones (Exa, Tavily, Firecrawl, Brave, Jina, Linkup, Google CSE, LangSearch), self-hosted SearXNG, and Baidu. Free backends run without keys; paid backends are opt-in and skipped — not failed — when their key is absent.
 
 Full source survey, including what is unreachable and why: [references/providers.md](references/providers.md).
 
@@ -40,7 +40,7 @@ Orchestration deliberately lives outside this skill. It retrieves; it does not d
 | Wikipedia | none | working |
 | Hacker News (Algolia) | none | working |
 | StackExchange | none | working; `--engine` selects the site |
-| Exa / Tavily / Brave / Serper | key | reachable, skipped until key is configured |
+| Exa / Tavily / Firecrawl / Brave | key | reachable, skipped until key is configured |
 | Jina / Firecrawl / Linkup / Valyu / Kagi / Google CSE / 博查 / 智谱 / LangSearch | key | adapters implemented, response shape unverified until a real key is used |
 | SearXNG | `SEARXNG_URL` | self-hosted only; public instances disable JSON |
 | Baidu | none | endpoint blocked or anti-bot; reported as failed, never as empty |
