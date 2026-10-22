@@ -399,9 +399,10 @@ def write_outputs(out: Path, query: str, providers: list[str], limit: int,
             item["retrieved_at"] = log["generated_at"]
             writer.writerow(item)
 
+    log["files"] = {k: str(v) for k, v in paths.items()}
     paths["search-log.json"].write_text(
         json.dumps(log, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    return {k: str(v) for k, v in paths.items()}
+    return log["files"]
 
 
 def build_log(query: str, providers: list[str], limit: int) -> dict:
