@@ -1,0 +1,201 @@
+{
+  "schema": 1,
+  "updated": "2026-10-22",
+  "verification": {
+    "method": "git ls-remote + git clone --depth 1 --filter=blob:none --sparse，核对 HEAD commit、根目录 LICENSE、git 跟踪文件数",
+    "limitation": "已核对存在性、commit、许可与体量；未核对 star 数与最近提交时间，因为 web_fetch 拒绝连接非公网 IP（本机 DNS 为 Clash fake-IP 段 198.18.0.0/15）",
+    "checked_at": "2026-10-22"
+  },
+  "status_legend": {
+    "listed": "仅登记链接，未克隆未评估",
+    "evaluating": "已克隆到 third-party/repos/，正在评估",
+    "adopted": "已确认许可并被本仓库技能采用",
+    "rejected": "评估后不采用，保留理由",
+    "archived": "曾经采用，现已弃用"
+  },
+  "entries": [
+    {
+      "id": "anthropics-skills",
+      "name": "anthropics/skills",
+      "url": "https://github.com/anthropics/skills",
+      "kind": "official-skill-collection",
+      "summary": "Anthropic 官方 Agent Skills 实现，含文档处理、画布设计、Claude API 等技能，是 Agent Skills 标准的参考实现。",
+      "relevance": "文档类技能的直接参考来源；与宿主自带 office 技能集重叠，采用前先做差异对比。许可在每个 skill 目录内，逐个核对。",
+      "tags": [
+        "skills",
+        "documents",
+        "official"
+      ],
+      "status": "listed",
+      "license": "Apache-2.0 (per-skill LICENSE.txt)",
+      "license_checked": true,
+      "license_note": "根目录无 LICENSE；每个 skills/<name>/LICENSE.txt 单独授权。抽样 5 个文件 sha 相同（Apache-2.0），未逐个核对全部。",
+      "size": "medium",
+      "files": 445,
+      "local_path": null,
+      "commit": "dbd4588f9e1033efb41dad4bef2f7947c8993d44",
+      "added": "2026-10-22",
+      "verified": true,
+      "verified_at": "2026-10-22"
+    },
+    {
+      "id": "obra-superpowers",
+      "name": "obra/superpowers",
+      "url": "https://github.com/obra/superpowers",
+      "kind": "skill-framework",
+      "summary": "Agentic skills 框架与软件开发方法论，把工作流程固化成可组合技能，含头脑风暴与 TDD 类流程。",
+      "relevance": "与 coding 分区重叠：「先发散再收敛」「先写失败测试」的思路与 our 的 requirement-intake / feature-implement 同源。MIT 允许参考，但需登记 provenance。",
+      "tags": [
+        "skills",
+        "methodology",
+        "workflow"
+      ],
+      "status": "listed",
+      "license": "MIT",
+      "license_checked": true,
+      "size": "medium",
+      "files": 231,
+      "local_path": null,
+      "commit": "2ce8aa15d05bd57213e6f746f953aafb7ded7a8b",
+      "added": "2026-10-22",
+      "verified": true,
+      "verified_at": "2026-10-22"
+    },
+    {
+      "id": "modelcontextprotocol-servers",
+      "name": "modelcontextprotocol/servers",
+      "url": "https://github.com/modelcontextprotocol/servers",
+      "kind": "mcp-reference",
+      "summary": "MCP 官方参考服务器集合，含 filesystem、git、fetch、memory 等实现。",
+      "relevance": "给技能加脚本动作时的工具接口参考；属于工具层不是技能层。注意：部分第三方服务器在独立仓库，主仓只保留参考实现。",
+      "tags": [
+        "mcp",
+        "tools",
+        "official"
+      ],
+      "status": "listed",
+      "license": "MIT",
+      "license_checked": true,
+      "size": "medium",
+      "files": 339,
+      "local_path": null,
+      "commit": "51b6382a3e827aceb6bce430b1208d69b93d95ea",
+      "added": "2026-10-22",
+      "verified": true,
+      "verified_at": "2026-10-22"
+    },
+    {
+      "id": "punkpeye-awesome-mcp-servers",
+      "name": "punkpeye/awesome-mcp-servers",
+      "url": "https://github.com/punkpeye/awesome-mcp-servers",
+      "kind": "mcp-index",
+      "summary": "MCP 服务器索引，按用途分类的社区清单，以 README 为主体的聚合仓库。",
+      "relevance": "查找现成 MCP 工具的第一站，避免重复实现连接器。清单内容随上游变动，只当索引用，不作为事实来源。",
+      "tags": [
+        "mcp",
+        "index"
+      ],
+      "status": "listed",
+      "license": "MIT",
+      "license_checked": true,
+      "size": "small",
+      "files": 12,
+      "local_path": null,
+      "commit": "f00a852f6e44db766312c7ad0de5e98803aefc9d",
+      "added": "2026-10-22",
+      "verified": true,
+      "verified_at": "2026-10-22"
+    },
+    {
+      "id": "wshobson-agents",
+      "name": "wshobson/agents",
+      "url": "https://github.com/wshobson/agents",
+      "kind": "subagent-collection",
+      "summary": "面向 AI 编码工具的 plugins、agents 与 skills 集合，按语言与任务分类。",
+      "relevance": "对照物：它用子代理做分工，我们用「技能 + 契约」做分工。评估点是长任务里哪种更不容易丢上下文与验收标准。",
+      "tags": [
+        "agents",
+        "claude-code",
+        "plugins"
+      ],
+      "status": "listed",
+      "license": "MIT",
+      "license_checked": true,
+      "size": "large",
+      "files": 1170,
+      "local_path": null,
+      "commit": "0874a27b17a22e2b7c2e2bcd725768e0803cad06",
+      "added": "2026-10-22",
+      "verified": true,
+      "verified_at": "2026-10-22"
+    },
+    {
+      "id": "hesreallyhim-awesome-claude-code",
+      "name": "hesreallyhim/awesome-claude-code",
+      "url": "https://github.com/hesreallyhim/awesome-claude-code",
+      "kind": "awesome-list",
+      "summary": "Claude Code 生态清单，覆盖斜杠命令、工作流、工具与文章。",
+      "relevance": "仅用于订阅上游动态。许可为 CC BY-NC-ND 4.0：禁止商用、禁止演绎，清单文本不可复制进本仓库，只能引用链接与事实性描述。",
+      "tags": [
+        "awesome",
+        "claude-code"
+      ],
+      "status": "listed",
+      "license": "CC-BY-NC-ND-4.0",
+      "license_checked": true,
+      "license_note": "含 NonCommercial 与 NoDerivatives 条款，是最严格的一条；不要复制其条目文本或改编其组织方式。",
+      "size": "small",
+      "files": 56,
+      "local_path": null,
+      "commit": "f5d6c900c9f47460b224b25d1685927033efeb17",
+      "added": "2026-10-22",
+      "verified": true,
+      "verified_at": "2026-10-22"
+    },
+    {
+      "id": "ditto190-awesome-agent-skills",
+      "name": "Ditto190/awesome-agent-skills",
+      "url": "https://github.com/Ditto190/awesome-agent-skills",
+      "kind": "skill-index",
+      "summary": "单 README 形式的 agent skills 索引，声称聚合 500+ 技能并兼容 Codex、Gemini CLI、Cursor 等宿主。",
+      "relevance": "只有 README + LICENSE + CONTRIBUTING 三个文件，本身不含可复用实现；价值在于跨宿主兼容写法的线索，逐条追到上游再评估。",
+      "tags": [
+        "skills",
+        "index",
+        "multi-host"
+      ],
+      "status": "listed",
+      "license": "MIT",
+      "license_checked": true,
+      "size": "small",
+      "files": 4,
+      "local_path": null,
+      "commit": "af465bbef5632ee23cf20a2291df31b29d3fd0c9",
+      "added": "2026-10-22",
+      "verified": true,
+      "verified_at": "2026-10-22"
+    },
+    {
+      "id": "vivy-yi-awesome-skills",
+      "name": "vivy-yi/awesome-skills",
+      "url": "https://github.com/vivy-yi/awesome-skills",
+      "kind": "skill-index",
+      "summary": "AI agent skills 与 Claude Skills 仓库的索引清单。",
+      "relevance": "广度优先扫一遍，挑出与 academic-research / coding 真正相关的少数条目再深挖；不整体引入。",
+      "tags": [
+        "skills",
+        "index"
+      ],
+      "status": "listed",
+      "license": "MIT",
+      "license_checked": true,
+      "size": "small",
+      "files": 56,
+      "local_path": null,
+      "commit": "4f9828004bc96b6186214c1e0f8591effe3fa3f4",
+      "added": "2026-10-22",
+      "verified": true,
+      "verified_at": "2026-10-22"
+    }
+  ]
+}

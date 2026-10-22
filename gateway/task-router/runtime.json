@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "task_contract",
+      "kind": "markdown",
+      "required": true,
+      "note": "目标、非目标、第三人可执行的验收标准、约束、假设登记、严谨度档位、重签触发条件。"
+    },
+    {
+      "role": "routing_decision",
+      "kind": "json",
+      "required": true,
+      "note": "选中的领域与入口技能，被否候选及理由；技能必须真实存在于本仓库。"
+    },
+    {
+      "role": "open_questions",
+      "kind": "markdown",
+      "required": true,
+      "note": "每项含默认取值、影响面、是否阻塞、默认值的代价。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": false
+  },
+  "recovery": [
+    "用户不在线：出草案并标记未确认，优先选可逆解读，交付时说明该状态。",
+    "目标中途变化：旧契约标 superseded 并重签，不得原地修改已确认契约。",
+    "没有匹配领域：提出新分区与最小契约，不硬塞进最近的目录。"
+  ],
+  "todo": [
+    "实现 scripts/route_check.py：校验 routing_decision 指向的技能真实存在。",
+    "实现契约模板填充与版本号生成（v1, v2 …），配合重签流程。"
+  ]
+}

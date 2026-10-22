@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "evidence_map",
+      "kind": "json",
+      "required": true,
+      "note": "每条论断含 support / contradict / silent 三组引用与逐条证据层级；无证据须标 unsupported。"
+    },
+    {
+      "role": "contradiction_log",
+      "kind": "markdown",
+      "required": true,
+      "note": "每处冲突写清对比属性与结论：真实冲突 / 范围差异 / 未解决；未解决需写什么能定论。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "原文取不到时标记 unsupported，不得删除该论断，保证缺口向下游可见。",
+    "笔记与矩阵冲突时以可追溯到文件的笔记为准，否则回查 search_log 重新推导。"
+  ],
+  "todo": [
+    "实现断言级覆盖率检查：claims × 证据数组的完整性校验脚本。",
+    "加入引用链检测：识别引用中的引用（second-hand citation）。"
+  ]
+}

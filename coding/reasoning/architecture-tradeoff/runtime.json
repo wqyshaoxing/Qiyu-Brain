@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "option_matrix",
+      "kind": "markdown",
+      "required": true,
+      "note": "选项 × 约束，带度量单位；估算须标注为估算；必须包含「什么都不改」这一项。"
+    },
+    {
+      "role": "decision_record",
+      "kind": "markdown",
+      "required": true,
+      "note": "决策、上下文、被否方案、复活条件、回退成本（按工作量计）。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "缺少度量：标注为未测量，并优先选择回退成本最低的方案。",
+    "实现中出现新约束：重开记录，不得为既有选择补写理由。"
+  ],
+  "todo": [
+    "实现 scripts/bench_probe.py：把关键约束变成可复现的基准测量。",
+    "加入 ADR 模板校验（必填段落检查）。"
+  ]
+}

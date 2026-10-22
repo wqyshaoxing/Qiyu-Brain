@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "profile_update",
+      "kind": "json",
+      "required": true,
+      "note": "每条含文本、目标文件、类别、来源、置信度、状态；不得含敏感属性（除用户明示）。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": false
+  },
+  "recovery": [
+    "用户否认某条：标记 rejected 并保留记录，之后不再重复推断。",
+    "两条偏好冲突且用户也不确定：两条都保留，下次任务时暴露冲突，不自行择一。"
+  ],
+  "todo": [
+    "实现 scripts/profile_diff.py：生成条目级 diff，便于用户逐条接受/拒绝。",
+    "实现重复度统计：同一纠正出现次数达到阈值才升级为长期偏好。"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "primary_artifact",
+      "kind": "markdown",
+      "required": true,
+      "note": "验收时实际核对什么，而不是只检查文件存在。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "依赖缺失时保持 blocked 并输出具体缺失项，不生成占位产物。"
+  ],
+  "todo": [
+    "实现可选的脚本动作，并在此声明 script 路径。"
+  ]
+}

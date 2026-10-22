@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "audit_report",
+      "kind": "markdown",
+      "required": true,
+      "note": "逐条引用给出判决、原文引句、位置、覆盖率统计与放行决定；不可读也必须列出。"
+    },
+    {
+      "role": "evidence_bundle",
+      "kind": "json",
+      "required": true,
+      "note": "claim key、引用、来源标识、引句、位置、判决；用于复核与抽检。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "来源不可获取：标记 unreadable，拦截发布，并列出需要的访问权限。",
+    "审查后稿件被改动：本次审查作废，重新执行，不修补旧报告。"
+  ],
+  "todo": [
+    "实现 scripts/audit_coverage.py：正文引用与 evidence_bundle 的数量一致性校验。",
+    "接入撤稿/更正检查（Crossref 或 Retraction Watch）。"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "query_plan",
+      "kind": "markdown",
+      "required": true,
+      "note": "纳排标准、时间范围、可复现查询串；标准必须写在检索之前。"
+    },
+    {
+      "role": "literature_matrix",
+      "kind": "csv",
+      "required": true,
+      "note": "每条含标识符、来源、年份、证据层级、去重键、筛选结论；不得有无标识符的行。"
+    },
+    {
+      "role": "search_log",
+      "kind": "json",
+      "required": true,
+      "note": "每次查询的来源、命中数、限流与失败；部分失败保留，不覆盖为成功。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "限流或 5xx 时退避重试，超过重试上限记为失败并保留已有结果。",
+    "去重键冲突不自动合并，写入 search_log 待人工确认。",
+    "数据库不可达记为覆盖缺口，不得静默替换数据源。"
+  ],
+  "todo": [
+    "实现 scripts/search.py：Crossref / arXiv 有界检索与 provenance 写入。",
+    "接入 BoomSkills 的 paper-search 作为 PDF 获取适配器，不重复实现。"
+  ]
+}

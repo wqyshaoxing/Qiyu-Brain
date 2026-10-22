@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "draft",
+      "kind": "markdown",
+      "required": true,
+      "note": "散文正文；无证据句必须就地标注或删除，不得用模糊措辞掩盖。"
+    },
+    {
+      "role": "claim_index",
+      "kind": "json",
+      "required": true,
+      "note": "句子 → claim key → evidence_map 条目的映射；不得有悬空 key。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "写作中发现 claim 薄弱：回到 evidence-synthesis，不得改用更强措辞补偿。",
+    "审稿意见要求改写段落：先修证据图再改文字。"
+  ],
+  "todo": [
+    "实现 scripts/check_claim_index.py：悬空 key 与未标注断言的双向检查。",
+    "加入数字一致性检查：正文数字与源产物逐项比对。"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "requirement_spec",
+      "kind": "markdown",
+      "required": true,
+      "note": "现状与期望行为分开写；边界案例含预期结果；验收标准可直接转成测试；非目标存在。"
+    },
+    {
+      "role": "open_questions",
+      "kind": "markdown",
+      "required": true,
+      "note": "每项含默认取值、影响面、是否阻塞；影响架构的问题必须标阻塞。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "需求互相矛盾：停下来暴露冲突，不得静默择一。",
+    "用户无法答复：取最保守解读并置于开关之后，记为假设。"
+  ],
+  "todo": [
+    "实现 scripts/spec_lint.py：验收标准可测试性检查（禁止不可验证形容词）。",
+    "生成测试骨架：把验收标准转成待填的 pytest 用例。"
+  ]
+}

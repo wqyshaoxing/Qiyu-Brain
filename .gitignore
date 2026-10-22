@@ -1,0 +1,19 @@
+# 外部仓库：只登记，不提交克隆体
+third-party/repos/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# 本地状态与运行记录，不进版本库
+_profile/.updates/
+.boomskills/
+state/
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

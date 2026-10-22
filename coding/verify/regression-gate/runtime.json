@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "verification_report",
+      "kind": "markdown",
+      "required": true,
+      "note": "改前/改后的复现命令与结果、测试矩阵、diff 审查发现、放行与否。"
+    },
+    {
+      "role": "residual_risks",
+      "kind": "markdown",
+      "required": true,
+      "note": "未覆盖路径、环境差异、回滚方案；环境不一致要写明，不得假设等价。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "无法复现：报 unreproducible，不得声称修复有效。",
+    "环境与生产不一致：写进残留风险，不假定等价。"
+  ],
+  "todo": [
+    "实现 scripts/test_matrix.py：按改动文件推导应跑的测试集合。",
+    "接入敏感信息扫描：检查日志与错误输出是否带凭据。"
+  ]
+}
