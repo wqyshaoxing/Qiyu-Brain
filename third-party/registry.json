@@ -2079,6 +2079,75 @@
       "verified": true,
       "verified_at": "2026-10-22",
       "needs_review": false
+    },
+    {
+      "id": "mpuig-agent-slides",
+      "name": "mpuig/agent-slides",
+      "url": "https://github.com/mpuig/agent-slides",
+      "kind": "skill-collection",
+      "summary": "MIT：7 个可组合的幻灯技能（extract/build/critique/audit/edit/polish/full）+ Python CLI。",
+      "relevance": "判断层最完整的参考：build 的流程与字数预算、audit 的技术与内容双通道，已取用。",
+      "tags": [
+        "slides",
+        "pptx"
+      ],
+      "status": "listed",
+      "license": "MIT",
+      "license_checked": true,
+      "size": "medium",
+      "skills": 7,
+      "local_path": null,
+      "commit": "820782a5fb",
+      "added": "2026-10-22",
+      "verified": true,
+      "verified_at": "2026-10-22",
+      "needs_review": false
+    },
+    {
+      "id": "siril9-presentation-skill",
+      "name": "siril9/presentation-skill",
+      "url": "https://github.com/siril9/presentation-skill",
+      "kind": "skill-collection",
+      "summary": "MIT：内容优先的可编辑 PPTX 技能，按 JSON 重建、原生图表、渲染后视觉核验。",
+      "relevance": "「spec 先行、按 spec 重建」的思路来源。",
+      "tags": [
+        "slides",
+        "pptx"
+      ],
+      "status": "listed",
+      "license": "MIT",
+      "license_checked": true,
+      "size": "medium",
+      "skills": 1,
+      "local_path": null,
+      "commit": "efd899c5dd",
+      "added": "2026-10-22",
+      "verified": true,
+      "verified_at": "2026-10-22",
+      "needs_review": false
+    },
+    {
+      "id": "hugohe3-ppt-master",
+      "name": "hugohe3/ppt-master",
+      "url": "https://github.com/hugohe3/ppt-master",
+      "kind": "skill-collection",
+      "summary": "MIT：单技能 PPT 生成流水线，分阶段切换角色，体量大（13k 文件，含 Python 依赖）。",
+      "relevance": "「把长流程切成阶段并声明加载顺序」的参考；不引入其依赖链。",
+      "tags": [
+        "slides",
+        "pptx"
+      ],
+      "status": "listed",
+      "license": "MIT",
+      "license_checked": true,
+      "size": "medium",
+      "skills": 1,
+      "local_path": null,
+      "commit": "604ecdec8d",
+      "added": "2026-10-22",
+      "verified": true,
+      "verified_at": "2026-10-22",
+      "needs_review": false
     }
   ]
 }

@@ -51,7 +51,10 @@
 | 帮我查一下有哪些论文 / 多源检索一遍 | input | [shared-scholarly-search](shared/input/shared-scholarly-search/SKILL.md) | query_plan、result_matrix、search_log |
 | 上网查一下 / 最新的是什么 / 官方文档怎么说 | input | [shared-web-search](shared/input/shared-web-search/SKILL.md) | query_plan、result_matrix、search_log |
 
-`shared/reasoning`、`shared/output`、`shared/verify` 三个阶段目录已建，**尚未放入技能**。
+| 做一套能讲、能投的 PPT / 幻灯片 | output | [shared-slide-build](shared/output/shared-slide-build/SKILL.md) | deck_spec、slide_deck、build_log |
+| 讲之前检查一遍，字太小/图表没来源 | verify | [shared-slide-audit](shared/verify/shared-slide-audit/SKILL.md) | audit_report、residual_risks |
+
+`shared/reasoning` 仍为空；`shared/input`、`output`、`verify` 已有技能。
 
 ## 外部资源
 

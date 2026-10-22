@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "audit_report",
+      "kind": "markdown",
+      "required": true,
+      "note": "逐页发现、严重级别、实际检查了什么、放行与否；未渲染的页要写明原因。"
+    },
+    {
+      "role": "residual_risks",
+      "kind": "markdown",
+      "required": true,
+      "note": "未渲染的页面、缺失字体、无法追溯的数据、未做的检查。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "无法渲染：改审 spec 与图片，并在报告中列出跳过的检查项。",
+    "审后改动：本次审查作废，重新执行，不修补旧报告。",
+    "对『字太多』有分歧：回到记录的逐页字数预算，不靠审美争论。"
+  ],
+  "todo": [
+    "若引入渲染器，增加自动检查：字号、溢出、对比度、图片分辨率。",
+    "把『标题只读一遍』的结果固化成 audit_report 的固定小节。"
+  ]
+}

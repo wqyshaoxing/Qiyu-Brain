@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "mode": "agent",
+  "actions": [],
+  "artifacts": [
+    {
+      "role": "deck_spec",
+      "kind": "json",
+      "required": true,
+      "note": "逐页：标题、版式原型、要点、图表数据、备注；含字数预算与字号下限。"
+    },
+    {
+      "role": "slide_deck",
+      "kind": "pptx",
+      "required": true,
+      "note": "可打开、页数正确、备注已附带；不得用改后缀的假文件充数。"
+    },
+    {
+      "role": "build_log",
+      "kind": "json",
+      "required": true,
+      "note": "所用渲染器、字体替换、缺失图片、跳过或降级的页面。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "没有渲染器：交付 spec + 占位文件并说明需要什么，不得假装成功。",
+    "内容超预算：删内容，不得把字号压到下限以下。",
+    "图表缺源数据：标为示意或删除，不得编造数据。"
+  ],
+  "todo": [
+    "确定是否引入 python-pptx 作为可选渲染器（需在 requires 中声明，缺依赖要明确失败）。",
+    "把 deck-spec 的 JSON Schema 固化到 references/。"
+  ]
+}

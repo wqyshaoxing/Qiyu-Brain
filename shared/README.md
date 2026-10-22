@@ -58,8 +58,9 @@
 | 阶段 | 技能 | 说明 |
 | --- | --- | --- |
 | input | [shared-scholarly-search](input/shared-scholarly-search/SKILL.md) | 六源检索、有界重试、DOI 级去重、三者产物留痕。标准库实现，无依赖 |
+| input | [shared-web-search](input/shared-web-search/SKILL.md) | 十源网页检索、按 URL 与标题两轮去重、噪声页过滤 |
 | reasoning | — | 候选见 [reasoning/README.md](reasoning/README.md) |
-| output | — | 候选见 [output/README.md](output/README.md) |
-| verify | — | 候选见 [verify/README.md](verify/README.md) |
+| output | [shared-slide-build](output/shared-slide-build/SKILL.md) | 论点脊柱 → 标题大纲 → 字数预算 → 版式原型 → spec 先行渲染 |
+| verify | [shared-slide-audit](verify/shared-slide-audit/SKILL.md) | 技术通道（字号/溢出）+ 内容通道（标题是否声明论断）+ 标题只读检查 |
 
 其余阶段按需创建技能，不预建空壳。
