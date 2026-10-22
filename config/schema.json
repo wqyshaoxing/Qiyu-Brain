@@ -27,12 +27,10 @@
         {"name": "FIRECRAWL_API_KEY", "secret": true, "required": false, "provider": "Firecrawl", "help": "检索与抓取一体。", "signup": "https://firecrawl.dev/app/api-keys"},
         {"name": "LINKUP_API_KEY", "secret": true, "required": false, "provider": "Linkup", "help": "欧洲索引，按查询计费。", "signup": "https://app.linkup.so"},
         {"name": "VALYU_API_KEY", "secret": true, "required": false, "provider": "Valyu", "help": "科研与金融数据检索。", "signup": "https://platform.valyu.ai"},
-        {"name": "KAGI_API_KEY", "secret": true, "required": false, "provider": "Kagi", "help": "付费搜索，用 Bot token 形式传入。", "signup": "https://kagi.com/settings?p=api"},
-        {"name": "GOOGLE_CSE_KEY", "secret": true, "required": false, "provider": "Google Programmable Search", "help": "需要同时填 GOOGLE_CSE_CX。", "signup": "https://programmablesearchengine.google.com/"},
+        {"name": "GOOGLE_CSE_KEY", "secret": true, "required": false, "provider": "Google Programmable Search", "help": "需要同时填 GOOGLE_CSE_CX。有每日免费额度。", "signup": "https://programmablesearchengine.google.com/"},
         {"name": "GOOGLE_CSE_CX", "secret": false, "required": false, "provider": "Google Programmable Search", "help": "搜索引擎 ID（cx），与 Key 成对出现。", "signup": "https://programmablesearchengine.google.com/"},
-        {"name": "BOCHA_API_KEY", "secret": true, "required": false, "provider": "博查", "help": "中文检索，国内直连。响应结构待验证。", "signup": "https://open.bochaai.com"},
-        {"name": "ZHIPU_API_KEY", "secret": true, "required": false, "provider": "智谱", "help": "web_search 接口，中文场景。响应结构待验证。", "signup": "https://open.bigmodel.cn/usercenter/apikeys"},
-        {"name": "LANGSEARCH_API_KEY", "secret": true, "required": false, "provider": "LangSearch", "help": "中英双语检索。响应结构待验证。", "signup": "https://langsearch.com"},
+        {"name": "BOCHA_API_KEY", "secret": true, "required": false, "provider": "博查", "help": "中文检索，国内直连，试用 1000 次/3 个月。响应结构待验证。", "signup": "https://open.bochaai.com"},
+        {"name": "LANGSEARCH_API_KEY", "secret": true, "required": false, "provider": "LangSearch", "help": "中英双语，有完全免费的免费计划。响应结构待验证。", "signup": "https://langsearch.com"},
         {"name": "SEARXNG_URL", "secret": false, "required": false, "provider": "SearXNG", "help": "自建实例地址，如 http://127.0.0.1:8080。公共实例普遍禁用 JSON，因此只认自建。可间接覆盖百度/必应/Google。", "signup": "https://docs.searxng.org/admin/installation.html"}
       ]
     },

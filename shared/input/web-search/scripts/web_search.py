@@ -51,18 +51,15 @@ PROVIDERS = {
     "firecrawl": {"key": "FIRECRAWL_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
     "linkup": {"key": "LINKUP_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
     "valyu": {"key": "VALYU_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
-    "kagi": {"key": "KAGI_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.2},
     "google_cse": {"key": "GOOGLE_CSE_KEY", "key2": "GOOGLE_CSE_CX",
                    "cost": "paid", "stability": "stable", "interval": 1.0},
     "bocha": {"key": "BOCHA_API_KEY", "cost": "paid", "stability": "unverified", "interval": 1.0},
-    "zhipu": {"key": "ZHIPU_API_KEY", "cost": "paid", "stability": "unverified", "interval": 1.0},
     "langsearch": {"key": "LANGSEARCH_API_KEY", "cost": "paid", "stability": "unverified", "interval": 1.0},
 }
 
 ENV_KEYS = ["SEARXNG_URL", "EXA_API_KEY", "TAVILY_API_KEY", "BRAVE_API_KEY", "SERPER_API_KEY",
             "JINA_API_KEY", "FIRECRAWL_API_KEY", "LINKUP_API_KEY", "VALYU_API_KEY",
-            "KAGI_API_KEY", "GOOGLE_CSE_KEY", "GOOGLE_CSE_CX", "BOCHA_API_KEY",
-            "ZHIPU_API_KEY", "LANGSEARCH_API_KEY"]
+            "GOOGLE_CSE_KEY", "GOOGLE_CSE_CX", "BOCHA_API_KEY", "LANGSEARCH_API_KEY"]
 
 _last_call: dict[str, float] = {}
 
@@ -389,25 +386,6 @@ def p_valyu(query: str, limit: int, engine: str = "") -> list[dict]:
             for r in (data.get("results") or [])][:limit]
 
 
-def p_kagi(query: str, limit: int, engine: str = "") -> list[dict]:
-    key = os.environ.get("KAGI_API_KEY")
-    if not key:
-        raise RuntimeError("skipped: KAGI_API_KEY not set")
-    params = {"q": query, "limit": min(limit, 10)}
-    status, body, _ = fetch("https://kagi.com/api/v0/search?" + urllib.parse.urlencode(params),
-                            provider="kagi", headers={"Authorization": f"Bot {key}"})
-    if status != 200 or not body:
-        raise RuntimeError(f"kagi HTTP {status}")
-    data = json.loads(body.decode("utf-8", "replace"))
-    out = []
-    for item in data.get("data") or []:
-        if item.get("t") != 0:
-            continue
-        out.append(result(title=item.get("title", ""), url=item.get("url", ""),
-                          snippet=item.get("snippet", ""), engine="kagi", source="kagi"))
-    return out[:limit]
-
-
 def p_google_cse(query: str, limit: int, engine: str = "") -> list[dict]:
     key = os.environ.get("GOOGLE_CSE_KEY")
     cx = os.environ.get("GOOGLE_CSE_CX")
@@ -453,27 +431,6 @@ def p_bocha(query: str, limit: int, engine: str = "") -> list[dict]:
             for r in rows][:limit]
 
 
-def p_zhipu(query: str, limit: int, engine: str = "") -> list[dict]:
-    key = os.environ.get("ZHIPU_API_KEY")
-    if not key:
-        raise RuntimeError("skipped: ZHIPU_API_KEY not set")
-    payload = json.dumps({"search_engine": "search_std",
-                          "search_query": query}).encode()
-    status, body, _ = fetch("https://open.bigmodel.cn/api/paas/v4/web_search",
-                            data=payload, provider="zhipu",
-                            headers={"Content-Type": "application/json",
-                                     "Authorization": f"Bearer {key}"})
-    if status != 200 or not body:
-        raise RuntimeError(f"zhipu HTTP {status}")
-    data = json.loads(body.decode("utf-8", "replace"))
-    rows = data.get("search_result") or []
-    if not rows:
-        raise RuntimeError("zhipu parsed 0 results; body: " + body[:200].decode("utf-8", "replace"))
-    return [result(title=r.get("title", ""), url=r.get("link", ""),
-                   snippet=r.get("content", ""), engine="zhipu", source="zhipu")
-            for r in rows][:limit]
-
-
 def p_langsearch(query: str, limit: int, engine: str = "") -> list[dict]:
     key = os.environ.get("LANGSEARCH_API_KEY")
     if not key:
@@ -502,8 +459,8 @@ FETCHERS = {
     "searxng": p_searxng, "exa": p_exa, "tavily": p_tavily,
     "brave": p_brave, "serper": p_serper, "jina": p_jina,
     "firecrawl": p_firecrawl, "linkup": p_linkup, "valyu": p_valyu,
-    "kagi": p_kagi, "google_cse": p_google_cse, "bocha": p_bocha,
-    "zhipu": p_zhipu, "langsearch": p_langsearch,
+    "google_cse": p_google_cse, "bocha": p_bocha,
+    "langsearch": p_langsearch,
 }
 
 
@@ -607,9 +564,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.list_providers:
-        print(f"{'provider':12} {'cost':12} {'stability':10} {'key/config'}")
+        print(f"{'provider':14} {'cost':12} {'stability':10} {'key/config'}")
         for name, meta in PROVIDERS.items():
-            print(f"{name:12} {meta['cost']:12} {meta['stability']:10} {meta['key'] or '-'}")
+            print(f"{name:14} {meta['cost']:12} {meta['stability']:10} {meta['key'] or '-'}")
         return 0
 
     if args.doctor:
