@@ -37,19 +37,32 @@ MAX_ATTEMPTS = 3
 
 # stability: stable = documented JSON API, fragile = HTML scraping, keyed = needs a key
 PROVIDERS = {
-    "duckduckgo": {"key": None, "cost": "free", "stability": "fragile", "interval": 2.0},
-    "wikipedia": {"key": None, "cost": "free", "stability": "stable", "interval": 0.5},
-    "hn": {"key": None, "cost": "free", "stability": "stable", "interval": 0.5},
-    "stackexchange": {"key": None, "cost": "free", "stability": "stable", "interval": 0.5},
+    "duckduckgo": {"key": None, "cost": "free", "stability": "fragile", "interval": 2.0, "preset": "free"},
+    "wikipedia": {"key": None, "cost": "free", "stability": "stable", "interval": 0.5, "preset": "free"},
+    "hn": {"key": None, "cost": "free", "stability": "stable", "interval": 0.5, "preset": "free"},
+    "stackexchange": {"key": None, "cost": "free", "stability": "stable", "interval": 0.5, "preset": "free"},
     "baidu": {"key": None, "cost": "free", "stability": "fragile", "interval": 3.0},
     "searxng": {"key": "SEARXNG_URL", "cost": "self-hosted", "stability": "stable", "interval": 1.0},
     "exa": {"key": "EXA_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
     "tavily": {"key": "TAVILY_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
     "brave": {"key": "BRAVE_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.1},
     "serper": {"key": "SERPER_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
+    "jina": {"key": "JINA_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
+    "firecrawl": {"key": "FIRECRAWL_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
+    "linkup": {"key": "LINKUP_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
+    "valyu": {"key": "VALYU_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
+    "kagi": {"key": "KAGI_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.2},
+    "google_cse": {"key": "GOOGLE_CSE_KEY", "key2": "GOOGLE_CSE_CX",
+                   "cost": "paid", "stability": "stable", "interval": 1.0},
+    "bocha": {"key": "BOCHA_API_KEY", "cost": "paid", "stability": "unverified", "interval": 1.0},
+    "zhipu": {"key": "ZHIPU_API_KEY", "cost": "paid", "stability": "unverified", "interval": 1.0},
+    "langsearch": {"key": "LANGSEARCH_API_KEY", "cost": "paid", "stability": "unverified", "interval": 1.0},
 }
 
-ENV_KEYS = ["SEARXNG_URL", "EXA_API_KEY", "TAVILY_API_KEY", "BRAVE_API_KEY", "SERPER_API_KEY"]
+ENV_KEYS = ["SEARXNG_URL", "EXA_API_KEY", "TAVILY_API_KEY", "BRAVE_API_KEY", "SERPER_API_KEY",
+            "JINA_API_KEY", "FIRECRAWL_API_KEY", "LINKUP_API_KEY", "VALYU_API_KEY",
+            "KAGI_API_KEY", "GOOGLE_CSE_KEY", "GOOGLE_CSE_CX", "BOCHA_API_KEY",
+            "ZHIPU_API_KEY", "LANGSEARCH_API_KEY"]
 
 _last_call: dict[str, float] = {}
 
@@ -312,11 +325,185 @@ def p_stackexchange(query: str, limit: int, engine: str = "") -> list[dict]:
     return out
 
 
+def p_jina(query: str, limit: int, engine: str = "") -> list[dict]:
+    key = os.environ.get("JINA_API_KEY")
+    if not key:
+        raise RuntimeError("skipped: JINA_API_KEY not set")
+    status, body, _ = fetch("https://s.jina.ai/" + urllib.parse.quote(query), provider="jina",
+                            headers={"Authorization": f"Bearer {key}", "Accept": "application/json"})
+    if status != 200 or not body:
+        raise RuntimeError(f"jina HTTP {status}")
+    data = json.loads(body.decode("utf-8", "replace"))
+    out = [result(title=r.get("title", ""), url=r.get("url", ""),
+                  snippet=r.get("description") or r.get("content", ""),
+                  engine="jina", source="jina")
+           for r in (data.get("data") or [])]
+    return out[:limit]
+
+
+def p_firecrawl(query: str, limit: int, engine: str = "") -> list[dict]:
+    key = os.environ.get("FIRECRAWL_API_KEY")
+    if not key:
+        raise RuntimeError("skipped: FIRECRAWL_API_KEY not set")
+    payload = json.dumps({"query": query, "limit": min(limit, 10)}).encode()
+    status, body, _ = fetch("https://api.firecrawl.dev/v1/search", data=payload, provider="firecrawl",
+                            headers={"Content-Type": "application/json",
+                                     "Authorization": f"Bearer {key}"})
+    if status != 200 or not body:
+        raise RuntimeError(f"firecrawl HTTP {status}")
+    data = json.loads(body.decode("utf-8", "replace"))
+    return [result(title=r.get("title", ""), url=r.get("url", ""),
+                   snippet=r.get("description", ""), engine="firecrawl", source="firecrawl")
+            for r in (data.get("data") or [])][:limit]
+
+
+def p_linkup(query: str, limit: int, engine: str = "") -> list[dict]:
+    key = os.environ.get("LINKUP_API_KEY")
+    if not key:
+        raise RuntimeError("skipped: LINKUP_API_KEY not set")
+    payload = json.dumps({"q": query, "depth": "standard",
+                          "outputType": "searchResults"}).encode()
+    status, body, _ = fetch("https://api.linkup.so/v1/search", data=payload, provider="linkup",
+                            headers={"Content-Type": "application/json",
+                                     "Authorization": f"Bearer {key}"})
+    if status != 200 or not body:
+        raise RuntimeError(f"linkup HTTP {status}")
+    data = json.loads(body.decode("utf-8", "replace"))
+    return [result(title=r.get("name", ""), url=r.get("url", ""),
+                   snippet=r.get("content", ""), engine="linkup", source="linkup")
+            for r in (data.get("results") or [])][:limit]
+
+
+def p_valyu(query: str, limit: int, engine: str = "") -> list[dict]:
+    key = os.environ.get("VALYU_API_KEY")
+    if not key:
+        raise RuntimeError("skipped: VALYU_API_KEY not set")
+    payload = json.dumps({"query": query, "max_num_results": min(limit, 10)}).encode()
+    status, body, _ = fetch("https://api.valyu.ai/v1/search", data=payload, provider="valyu",
+                            headers={"Content-Type": "application/json", "x-api-key": key})
+    if status != 200 or not body:
+        raise RuntimeError(f"valyu HTTP {status}")
+    data = json.loads(body.decode("utf-8", "replace"))
+    return [result(title=r.get("title", ""), url=r.get("url", ""),
+                   snippet=r.get("content", ""), engine="valyu", source="valyu")
+            for r in (data.get("results") or [])][:limit]
+
+
+def p_kagi(query: str, limit: int, engine: str = "") -> list[dict]:
+    key = os.environ.get("KAGI_API_KEY")
+    if not key:
+        raise RuntimeError("skipped: KAGI_API_KEY not set")
+    params = {"q": query, "limit": min(limit, 10)}
+    status, body, _ = fetch("https://kagi.com/api/v0/search?" + urllib.parse.urlencode(params),
+                            provider="kagi", headers={"Authorization": f"Bot {key}"})
+    if status != 200 or not body:
+        raise RuntimeError(f"kagi HTTP {status}")
+    data = json.loads(body.decode("utf-8", "replace"))
+    out = []
+    for item in data.get("data") or []:
+        if item.get("t") != 0:
+            continue
+        out.append(result(title=item.get("title", ""), url=item.get("url", ""),
+                          snippet=item.get("snippet", ""), engine="kagi", source="kagi"))
+    return out[:limit]
+
+
+def p_google_cse(query: str, limit: int, engine: str = "") -> list[dict]:
+    key = os.environ.get("GOOGLE_CSE_KEY")
+    cx = os.environ.get("GOOGLE_CSE_CX")
+    if not key or not cx:
+        raise RuntimeError("skipped: GOOGLE_CSE_KEY / GOOGLE_CSE_CX not set")
+    params = {"key": key, "cx": cx, "q": query, "num": min(limit, 10)}
+    status, body, _ = fetch("https://www.googleapis.com/customsearch/v1?"
+                            + urllib.parse.urlencode(params), provider="google_cse")
+    if status != 200 or not body:
+        raise RuntimeError(f"google_cse HTTP {status}")
+    data = json.loads(body.decode("utf-8", "replace"))
+    return [result(title=r.get("title", ""), url=r.get("link", ""),
+                   snippet=r.get("snippet", ""), engine="google-cse", source="google_cse")
+            for r in (data.get("items") or [])][:limit]
+
+
+def _nested(obj, *path):
+    for key in path:
+        if not isinstance(obj, dict):
+            return None
+        obj = obj.get(key)
+    return obj
+
+
+def p_bocha(query: str, limit: int, engine: str = "") -> list[dict]:
+    key = os.environ.get("BOCHA_API_KEY")
+    if not key:
+        raise RuntimeError("skipped: BOCHA_API_KEY not set")
+    payload = json.dumps({"query": query, "count": min(limit, 10),
+                          "summary": False}).encode()
+    status, body, _ = fetch("https://api.bochaai.com/v1/web-search", data=payload, provider="bocha",
+                            headers={"Content-Type": "application/json",
+                                     "Authorization": f"Bearer {key}"})
+    if status != 200 or not body:
+        raise RuntimeError(f"bocha HTTP {status}")
+    data = json.loads(body.decode("utf-8", "replace"))
+    rows = (_nested(data, "data", "webPages", "value")
+            or _nested(data, "webPages", "value") or [])
+    if not rows:
+        raise RuntimeError("bocha parsed 0 results; body: " + body[:200].decode("utf-8", "replace"))
+    return [result(title=r.get("name", ""), url=r.get("url", ""),
+                   snippet=r.get("snippet", ""), engine="bocha", source="bocha")
+            for r in rows][:limit]
+
+
+def p_zhipu(query: str, limit: int, engine: str = "") -> list[dict]:
+    key = os.environ.get("ZHIPU_API_KEY")
+    if not key:
+        raise RuntimeError("skipped: ZHIPU_API_KEY not set")
+    payload = json.dumps({"search_engine": "search_std",
+                          "search_query": query}).encode()
+    status, body, _ = fetch("https://open.bigmodel.cn/api/paas/v4/web_search",
+                            data=payload, provider="zhipu",
+                            headers={"Content-Type": "application/json",
+                                     "Authorization": f"Bearer {key}"})
+    if status != 200 or not body:
+        raise RuntimeError(f"zhipu HTTP {status}")
+    data = json.loads(body.decode("utf-8", "replace"))
+    rows = data.get("search_result") or []
+    if not rows:
+        raise RuntimeError("zhipu parsed 0 results; body: " + body[:200].decode("utf-8", "replace"))
+    return [result(title=r.get("title", ""), url=r.get("link", ""),
+                   snippet=r.get("content", ""), engine="zhipu", source="zhipu")
+            for r in rows][:limit]
+
+
+def p_langsearch(query: str, limit: int, engine: str = "") -> list[dict]:
+    key = os.environ.get("LANGSEARCH_API_KEY")
+    if not key:
+        raise RuntimeError("skipped: LANGSEARCH_API_KEY not set")
+    payload = json.dumps({"query": query, "count": min(limit, 10)}).encode()
+    status, body, _ = fetch("https://api.langsearch.com/v1/web-search", data=payload,
+                            provider="langsearch",
+                            headers={"Content-Type": "application/json",
+                                     "Authorization": f"Bearer {key}"})
+    if status != 200 or not body:
+        raise RuntimeError(f"langsearch HTTP {status}")
+    data = json.loads(body.decode("utf-8", "replace"))
+    rows = (_nested(data, "data", "webPages", "value")
+            or _nested(data, "webPages", "value") or [])
+    if not rows:
+        raise RuntimeError("langsearch parsed 0 results; body: "
+                           + body[:200].decode("utf-8", "replace"))
+    return [result(title=r.get("name", ""), url=r.get("url", ""),
+                   snippet=r.get("snippet", ""), engine="langsearch", source="langsearch")
+            for r in rows][:limit]
+
+
 FETCHERS = {
     "duckduckgo": p_duckduckgo, "wikipedia": p_wikipedia, "baidu": p_baidu,
     "hn": p_hn, "stackexchange": p_stackexchange,
     "searxng": p_searxng, "exa": p_exa, "tavily": p_tavily,
-    "brave": p_brave, "serper": p_serper,
+    "brave": p_brave, "serper": p_serper, "jina": p_jina,
+    "firecrawl": p_firecrawl, "linkup": p_linkup, "valyu": p_valyu,
+    "kagi": p_kagi, "google_cse": p_google_cse, "bocha": p_bocha,
+    "zhipu": p_zhipu, "langsearch": p_langsearch,
 }
 
 
@@ -415,12 +602,35 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--list-providers", action="store_true")
+    parser.add_argument("--doctor", action="store_true",
+                        help="逐个来源实测：缺 key / 失败 / 可用，附原始错误片段")
     args = parser.parse_args(argv)
 
     if args.list_providers:
         print(f"{'provider':12} {'cost':12} {'stability':10} {'key/config'}")
         for name, meta in PROVIDERS.items():
             print(f"{name:12} {meta['cost']:12} {meta['stability']:10} {meta['key'] or '-'}")
+        return 0
+
+    if args.doctor:
+        load_env()
+        print(f"{'provider':14} {'key':26} {'status':8} detail")
+        for name, meta in PROVIDERS.items():
+            keys = [k for k in (meta["key"], meta.get("key2")) if k]
+            label = ",".join(keys) or "-"
+            missing = [k for k in keys if not os.environ.get(k)]
+            if missing:
+                print(f"{name:14} {label:26} {'missing':8} {', '.join(missing)}")
+                continue
+            try:
+                got = FETCHERS[name]("agent skills", 1, "")
+                print(f"{name:14} {label:26} {'ok':8} {len(got)} 条")
+            except RuntimeError as exc:
+                msg = str(exc)
+                status = "skip" if msg.startswith("skipped") else "fail"
+                print(f"{name:14} {label:26} {status:8} {msg[:90]}")
+            except Exception as exc:  # noqa: BLE001
+                print(f"{name:14} {label:26} {'fail':8} {type(exc).__name__}: {str(exc)[:70]}")
         return 0
 
     missing = [f for f in ("query", "out") if not getattr(args, f)]
@@ -431,7 +641,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.providers == "all":
         providers = list(PROVIDERS)
     elif args.providers == "free":
-        providers = [n for n, m in PROVIDERS.items() if m["cost"] in ("free", "self-hosted")]
+        providers = [n for n, m in PROVIDERS.items() if m.get("preset") == "free"]
     else:
         providers = [p.strip() for p in args.providers.split(",") if p.strip()]
     unknown = [p for p in providers if p not in PROVIDERS]
@@ -448,8 +658,10 @@ def main(argv: list[str] | None = None) -> int:
             "providers": providers,
             "limit_per_provider": args.limit,
             "keys": status,
-            "will_skip": [p for p in providers if PROVIDERS[p]["key"]
-                          and not os.environ.get(PROVIDERS[p]["key"])],
+            "will_skip": [p for p in providers
+                          if any(k and not os.environ.get(k)
+                                 for k in (PROVIDERS[p]["key"],
+                                           PROVIDERS[p].get("key2")))],
             "outputs": [str(out / n) for n in ("query-plan.md", "results.csv", "search-log.json")],
         }, ensure_ascii=False, indent=2))
         return 0
@@ -471,10 +683,11 @@ def main(argv: list[str] | None = None) -> int:
 
     for name in providers:
         meta = PROVIDERS[name]
-        key_name = meta["key"]
-        if key_name and not os.environ.get(key_name):
+        required = [k for k in (meta["key"], meta.get("key2")) if k]
+        missing_keys = [k for k in required if not os.environ.get(k)]
+        if missing_keys:
             log["providers"].append({"name": name, "status": "skipped",
-                                     "reason": f"{key_name} not set"})
+                                     "reason": ", ".join(missing_keys) + " not set"})
             continue
         started = time.time()
         try:

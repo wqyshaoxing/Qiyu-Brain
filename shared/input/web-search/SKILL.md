@@ -41,8 +41,11 @@ Orchestration deliberately lives outside this skill. It retrieves; it does not d
 | Hacker News (Algolia) | none | working |
 | StackExchange | none | working; `--engine` selects the site |
 | Exa / Tavily / Brave / Serper | key | reachable, skipped until key is configured |
+| Jina / Firecrawl / Linkup / Valyu / Kagi / Google CSE / 博查 / 智谱 / LangSearch | key | adapters implemented, response shape unverified until a real key is used |
 | SearXNG | `SEARXNG_URL` | self-hosted only; public instances disable JSON |
 | Baidu | none | endpoint blocked or anti-bot; reported as failed, never as empty |
+
+`--providers free` runs the four no-key backends only. `--doctor` probes every backend and reports `ok` / `missing` (no key) / `fail` (request or parse error) with the raw error text.
 
 A backend that cannot run is recorded with its reason. Silent substitution is not allowed.
 

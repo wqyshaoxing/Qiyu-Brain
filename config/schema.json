@@ -2,92 +2,16 @@
   "schema": 1,
   "env_file": ".env",
   "env_template": ".env.example",
-  "note": "本文件描述插件需要哪些凭据、属于哪个技能、是否必填。GUI 与 doctor 都读它，不要在代码里硬编码 key 名。",
+  "note": "描述插件需要哪些凭据、归属哪个技能、是否必填。GUI 与 doctor 都读它，代码里不许硬编码 key 名。",
   "groups": [
     {
       "id": "search",
-      "title": "检索来源",
-      "skills": ["shared/input/search-connectors", "shared/input/web-search"],
+      "title": "学术检索",
+      "skills": ["shared/input/search-connectors"],
       "keys": [
-        {
-          "name": "CROSSREF_MAILTO",
-          "secret": false,
-          "required": false,
-          "provider": "Crossref",
-          "help": "填入邮箱可进入礼貌池，限流更宽松。留空也能用。",
-          "signup": "https://www.crossref.org/documentation/retrieve-metadata/rest-api/"
-        },
-        {
-          "name": "SEMANTIC_SCHOLAR_API_KEY",
-          "secret": true,
-          "required": false,
-          "provider": "Semantic Scholar",
-          "help": "不填则匿名访问，限流较低。",
-          "signup": "https://www.semanticscholar.org/product/api"
-        },
-        {
-          "name": "PUBMED_API_KEY",
-          "secret": true,
-          "required": false,
-          "provider": "PubMed",
-          "help": "不填时按 3 请求/秒限流，通常够用。",
-          "signup": "https://www.ncbi.nlm.nih.gov/account/"
-        },
-        {
-          "name": "EXA_API_KEY",
-          "secret": true,
-          "required": false,
-          "provider": "Exa",
-          "help": "付费语义检索。未配置时该来源会被跳过，不影响其它来源。",
-          "signup": "https://dashboard.exa.ai/api-keys"
-        }
-      ]
-    },
-    {
-      "id": "zotero",
-      "title": "文献库",
-      "skills": ["academic-research/input/zotero-import"],
-      "keys": [
-        {
-          "name": "ZOTERO_API_KEY",
-          "secret": true,
-          "required": true,
-          "provider": "Zotero",
-          "help": "在 Zotero 设置中创建专用 key，只勾选读写权限。",
-          "signup": "https://www.zotero.org/settings/keys"
-        },
-        {
-          "name": "ZOTERO_LIBRARY_ID",
-          "secret": false,
-          "required": true,
-          "provider": "Zotero",
-          "help": "数字形式的 userID 或 groupID，见 keys 页面右上角。",
-          "signup": "https://www.zotero.org/settings/keys"
-        },
-        {
-          "name": "ZOTERO_LIBRARY_TYPE",
-          "secret": false,
-          "required": false,
-          "default": "user",
-          "provider": "Zotero",
-          "help": "user 或 group。",
-          "signup": "https://www.zotero.org/settings/keys"
-        }
-      ]
-    },
-    {
-      "id": "mineru",
-      "title": "PDF 解析",
-      "skills": ["academic-research/input/mineru-extract"],
-      "keys": [
-        {
-          "name": "MINERU_API_KEY",
-          "secret": true,
-          "required": true,
-          "provider": "MinerU",
-          "help": "用于 PDF → Markdown 与图片提取。",
-          "signup": "https://mineru.net"
-        }
+        {"name": "CROSSREF_MAILTO", "secret": false, "required": false, "provider": "Crossref", "help": "填邮箱进礼貌池，限流更宽松。无需注册。", "signup": "https://www.crossref.org/documentation/retrieve-metadata/rest-api/"},
+        {"name": "SEMANTIC_SCHOLAR_API_KEY", "secret": true, "required": false, "provider": "Semantic Scholar", "help": "不填则匿名限流。", "signup": "https://www.semanticscholar.org/product/api"},
+        {"name": "PUBMED_API_KEY", "secret": true, "required": false, "provider": "PubMed", "help": "不填按 3 次/秒，通常够用。", "signup": "https://www.ncbi.nlm.nih.gov/account/"}
       ]
     },
     {
@@ -95,38 +19,39 @@
       "title": "网页检索",
       "skills": ["shared/input/web-search"],
       "keys": [
-        {
-          "name": "TAVILY_API_KEY",
-          "secret": true,
-          "required": false,
-          "provider": "Tavily",
-          "help": "面向 AI 的检索 API，返回已清洗的内容。未配置则跳过。",
-          "signup": "https://app.tavily.com/home"
-        },
-        {
-          "name": "BRAVE_API_KEY",
-          "secret": true,
-          "required": false,
-          "provider": "Brave Search",
-          "help": "独立索引，不依赖 Google/Bing 转售。免费额度较小。",
-          "signup": "https://brave.com/search/api/"
-        },
-        {
-          "name": "SERPER_API_KEY",
-          "secret": true,
-          "required": false,
-          "provider": "Serper",
-          "help": "Google SERP 转售。合规风险自负，仅用于自查研究用途。",
-          "signup": "https://serper.dev"
-        },
-        {
-          "name": "SEARXNG_URL",
-          "secret": false,
-          "required": false,
-          "provider": "SearXNG",
-          "help": "自建实例地址，如 http://127.0.0.1:8080。公共实例普遍禁用 JSON，因此只认自建。用它可间接覆盖百度、必应、Google。",
-          "signup": "https://docs.searxng.org/admin/installation.html"
-        }
+        {"name": "EXA_API_KEY", "secret": true, "required": false, "provider": "Exa", "help": "语义检索，按结果计费。学术与网页两个技能共用。", "signup": "https://dashboard.exa.ai/api-keys"},
+        {"name": "TAVILY_API_KEY", "secret": true, "required": false, "provider": "Tavily", "help": "面向 AI 的检索，返回已清洗内容。免费额度较友好，建议先试这个。", "signup": "https://app.tavily.com/home"},
+        {"name": "BRAVE_API_KEY", "secret": true, "required": false, "provider": "Brave Search", "help": "独立索引，不转售 Google。", "signup": "https://brave.com/search/api/"},
+        {"name": "SERPER_API_KEY", "secret": true, "required": false, "provider": "Serper", "help": "Google SERP 转售，合规风险自负。", "signup": "https://serper.dev"},
+        {"name": "JINA_API_KEY", "secret": true, "required": false, "provider": "Jina", "help": "s.jina.ai 检索，返回带正文的 JSON。", "signup": "https://jina.ai/api-dashboard/"},
+        {"name": "FIRECRAWL_API_KEY", "secret": true, "required": false, "provider": "Firecrawl", "help": "检索与抓取一体。", "signup": "https://firecrawl.dev/app/api-keys"},
+        {"name": "LINKUP_API_KEY", "secret": true, "required": false, "provider": "Linkup", "help": "欧洲索引，按查询计费。", "signup": "https://app.linkup.so"},
+        {"name": "VALYU_API_KEY", "secret": true, "required": false, "provider": "Valyu", "help": "科研与金融数据检索。", "signup": "https://platform.valyu.ai"},
+        {"name": "KAGI_API_KEY", "secret": true, "required": false, "provider": "Kagi", "help": "付费搜索，用 Bot token 形式传入。", "signup": "https://kagi.com/settings?p=api"},
+        {"name": "GOOGLE_CSE_KEY", "secret": true, "required": false, "provider": "Google Programmable Search", "help": "需要同时填 GOOGLE_CSE_CX。", "signup": "https://programmablesearchengine.google.com/"},
+        {"name": "GOOGLE_CSE_CX", "secret": false, "required": false, "provider": "Google Programmable Search", "help": "搜索引擎 ID（cx），与 Key 成对出现。", "signup": "https://programmablesearchengine.google.com/"},
+        {"name": "BOCHA_API_KEY", "secret": true, "required": false, "provider": "博查", "help": "中文检索，国内直连。响应结构待验证。", "signup": "https://open.bochaai.com"},
+        {"name": "ZHIPU_API_KEY", "secret": true, "required": false, "provider": "智谱", "help": "web_search 接口，中文场景。响应结构待验证。", "signup": "https://open.bigmodel.cn/usercenter/apikeys"},
+        {"name": "LANGSEARCH_API_KEY", "secret": true, "required": false, "provider": "LangSearch", "help": "中英双语检索。响应结构待验证。", "signup": "https://langsearch.com"},
+        {"name": "SEARXNG_URL", "secret": false, "required": false, "provider": "SearXNG", "help": "自建实例地址，如 http://127.0.0.1:8080。公共实例普遍禁用 JSON，因此只认自建。可间接覆盖百度/必应/Google。", "signup": "https://docs.searxng.org/admin/installation.html"}
+      ]
+    },
+    {
+      "id": "zotero",
+      "title": "文献管理",
+      "skills": ["academic-research/input/zotero-import"],
+      "keys": [
+        {"name": "ZOTERO_API_KEY", "secret": true, "required": true, "provider": "Zotero", "help": "在 Zotero 设置创建专用 key，只勾读写权限。", "signup": "https://www.zotero.org/settings/keys"},
+        {"name": "ZOTERO_LIBRARY_ID", "secret": false, "required": true, "provider": "Zotero", "help": "数字形式的 userID 或 groupID，见 keys 页面右上角。", "signup": "https://www.zotero.org/settings/keys"},
+        {"name": "ZOTERO_LIBRARY_TYPE", "secret": false, "required": false, "default": "user", "provider": "Zotero", "help": "user 或 group。", "signup": "https://www.zotero.org/settings/keys"}
+      ]
+    },
+    {
+      "id": "mineru",
+      "title": "PDF 解析",
+      "skills": ["academic-research/input/mineru-extract"],
+      "keys": [
+        {"name": "MINERU_API_KEY", "secret": true, "required": true, "provider": "MinerU", "help": "PDF → Markdown 与图片提取。", "signup": "https://mineru.net"}
       ]
     },
     {
@@ -134,22 +59,8 @@
       "title": "本地界面",
       "skills": [],
       "keys": [
-        {
-          "name": "QIYU_GUI_HOST",
-          "secret": false,
-          "required": false,
-          "default": "127.0.0.1",
-          "help": "只允许本机监听，不要改成 0.0.0.0。",
-          "signup": ""
-        },
-        {
-          "name": "QIYU_GUI_PORT",
-          "secret": false,
-          "required": false,
-          "default": "8765",
-          "help": "端口冲突时改这里。",
-          "signup": ""
-        }
+        {"name": "QIYU_GUI_HOST", "secret": false, "required": false, "default": "127.0.0.1", "provider": "本地", "help": "只允许本机监听，不要改成 0.0.0.0。", "signup": ""},
+        {"name": "QIYU_GUI_PORT", "secret": false, "required": false, "default": "8765", "provider": "本地", "help": "端口冲突时改这里。", "signup": ""}
       ]
     }
   ]
