@@ -11,7 +11,9 @@ deps: []
 
 # Web Search
 
-One entry point over DuckDuckGo, Wikipedia, Baidu, SearXNG, Exa, Tavily, Brave, and Serper. Free backends run without keys; paid backends are opt-in and skipped — not failed — when their key is absent.
+One entry point over eight backends: DuckDuckGo, Wikipedia, Hacker News, StackExchange, Baidu, SearXNG, Exa, Tavily, Brave, and Serper. Free backends run without keys; paid backends are opt-in and skipped — not failed — when their key is absent.
+
+Full source survey, including what is unreachable and why: [references/providers.md](references/providers.md).
 
 ## When to use
 
@@ -29,6 +31,20 @@ One entry point over DuckDuckGo, Wikipedia, Baidu, SearXNG, Exa, Tavily, Brave, 
 | Judging whether a claim is true | reasoning layer, not here |
 
 Orchestration deliberately lives outside this skill. It retrieves; it does not decide scope.
+
+## Backends
+
+| Backend | Key | Status in this repo |
+| --- | --- | --- |
+| DuckDuckGo lite | none | working, HTML parsing (fragile) |
+| Wikipedia | none | working |
+| Hacker News (Algolia) | none | working |
+| StackExchange | none | working; `--engine` selects the site |
+| Exa / Tavily / Brave / Serper | key | reachable, skipped until key is configured |
+| SearXNG | `SEARXNG_URL` | self-hosted only; public instances disable JSON |
+| Baidu | none | endpoint blocked or anti-bot; reported as failed, never as empty |
+
+A backend that cannot run is recorded with its reason. Silent substitution is not allowed.
 
 ## Query craft
 

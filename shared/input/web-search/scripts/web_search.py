@@ -39,6 +39,8 @@ MAX_ATTEMPTS = 3
 PROVIDERS = {
     "duckduckgo": {"key": None, "cost": "free", "stability": "fragile", "interval": 2.0},
     "wikipedia": {"key": None, "cost": "free", "stability": "stable", "interval": 0.5},
+    "hn": {"key": None, "cost": "free", "stability": "stable", "interval": 0.5},
+    "stackexchange": {"key": None, "cost": "free", "stability": "stable", "interval": 0.5},
     "baidu": {"key": None, "cost": "free", "stability": "fragile", "interval": 3.0},
     "searxng": {"key": "SEARXNG_URL", "cost": "self-hosted", "stability": "stable", "interval": 1.0},
     "exa": {"key": "EXA_API_KEY", "cost": "paid", "stability": "stable", "interval": 1.0},
@@ -272,8 +274,47 @@ def p_serper(query: str, limit: int, engine: str = "") -> list[dict]:
             for item in data.get("organic", [])]
 
 
+def p_hn(query: str, limit: int, engine: str = "") -> list[dict]:
+    """Hacker News via Algolia. No key; good for technical discussion, not facts."""
+    params = {"query": query, "tags": "story", "hitsPerPage": min(limit, 30)}
+    status, body, _ = fetch("https://hn.algolia.com/api/v1/search?" + urllib.parse.urlencode(params),
+                            provider="hn")
+    if status != 200 or not body:
+        raise RuntimeError(f"hn HTTP {status}")
+    data = json.loads(body.decode("utf-8", "replace"))
+    out = []
+    for hit in data.get("hits", []):
+        oid = hit.get("objectID", "")
+        out.append(result(
+            title=hit.get("title") or "(untitled)",
+            url=hit.get("url") or (f"https://news.ycombinator.com/item?id={oid}" if oid else ""),
+            snippet=f"{hit.get('points', 0)} points, {hit.get('num_comments', 0)} comments",
+            engine="hn-algolia", source="hn"))
+    return out
+
+
+def p_stackexchange(query: str, limit: int, engine: str = "") -> list[dict]:
+    """StackExchange search; site defaults to stackoverflow, override with --engine."""
+    site = engine or "stackoverflow"
+    params = {"order": "desc", "sort": "relevance", "q": query,
+              "site": site, "pagesize": min(limit, 30)}
+    status, body, _ = fetch("https://api.stackexchange.com/2.3/search/advanced?"
+                            + urllib.parse.urlencode(params), provider="stackexchange")
+    if status != 200 or not body:
+        raise RuntimeError(f"stackexchange HTTP {status}")
+    data = json.loads(body.decode("utf-8", "replace"))
+    out = []
+    for item in data.get("items", []):
+        out.append(result(title=item.get("title", ""), url=item.get("link", ""),
+                          snippet=f"score {item.get('score', 0)}, "
+                                  f"{'answered' if item.get('is_answered') else 'unanswered'}",
+                          engine=site, source="stackexchange"))
+    return out
+
+
 FETCHERS = {
     "duckduckgo": p_duckduckgo, "wikipedia": p_wikipedia, "baidu": p_baidu,
+    "hn": p_hn, "stackexchange": p_stackexchange,
     "searxng": p_searxng, "exa": p_exa, "tavily": p_tavily,
     "brave": p_brave, "serper": p_serper,
 }
