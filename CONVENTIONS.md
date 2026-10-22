@@ -13,6 +13,24 @@
 - `stage`：`input` / `reasoning` / `output` / `verify`。扁平分区不用阶段目录，改在 frontmatter 写 `stage: [gateway]`。
 - `skill`：kebab-case，目录名必须等于 frontmatter 的 `name`。
 
+### 技能命名
+
+格式固定为 **`<分区>-<对象>-<动作>`**，因为技能装到宿主后是**扁平列表**，路径层级会消失，名字必须自带定位：
+
+| 分区前缀 | 含义 | 例子 |
+| --- | --- | --- |
+| `gateway-` | 阶段 0，路由与偏好 | `gateway-router`、`gateway-preferences` |
+| `shared-` | 跨领域原语 | `shared-scholarly-search`、`shared-web-search` |
+| `academic-` | 学术领域 | `academic-claim-map`、`academic-paper-draft` |
+| `coding-` | 开发领域 | `coding-feature-build`、`coding-regression-gate` |
+
+规则：
+
+- **对象要唯一到不会被误读成别的阶段**。`academic-claim-map` 是「论断→证据」，`academic-citation-audit` 是「引用→原文」，两者不重叠。
+- **动作放最后**，用动词而非名词：`-build` 不是 `-implementation`，`-audit` 不是 `-auditor`。
+- **不在名字里复述阶段**（`academic-input-search` 是错的）：阶段已由目录和 `stage` 字段表达。
+- 改名要同步：目录名、`name`、所有 `deps`、`consumes`/`produces` 引用、INDEX 链接、`config/schema.json` 的 skills 路径。`validate.py` 会查前三项。
+
 技能目录内固定：
 
 ```text
@@ -30,7 +48,7 @@ scripts/        可选，只在有可执行动作时建
 4. **目录是给人看的，触发靠 `description`**。所以 `description` 要写「什么时候用」，不是「这个技能是什么」。
 5. **链路靠契约，不靠目录顺序**。`consumes` / `produces` 必须能串起来；目录顺序不表达「先做 A 才能做 B」，真实思考是回环的。
 6. **阶段 0 只有一个**。`gateway/` 是扁平分区，不套阶段目录；其技能必须 `stage: [gateway]`，不得产出领域产物。
-7. **用户状态与技能分离**。画像和偏好在 `_profile/`，技能只读不写；写入走 `preference-distillation` 并留来源与置信度。
+7. **用户状态与技能分离**。画像和偏好在 `_profile/`，技能只读不写；写入走 `gateway-preferences` 并留来源与置信度。
 8. **外部仓库只登记不提交**。克隆体只能放 `third-party/repos/<id>/`；借用他人代码、思路、文本或数据，必须在 `third-party/provenance.json` 登记，并在该技能 frontmatter 的 `sources` 里声明 registry id。许可不明的上游只许借思路，不许复制代码。
 9. **通用能力放 `shared/`，但别提前抽象**。只有同时满足「领域中立」和「至少两个领域会用」才进 `shared`；只有一个领域用的先留在该领域。
 10. **默认只用免费源**。检索类技能在不指定来源时，只能跑无需 key 的来源；付费源必须由调用者显式点名，既不能默认开启，也不能在失败时静默顶替。
@@ -68,7 +86,7 @@ gateway → shared → <domain>
 
 ```yaml
 ---
-name: literature-search
+name: academic-literature-search
 description: 一句话，写触发场景，30–200 字符
 domain: academic-research
 stage: [input]

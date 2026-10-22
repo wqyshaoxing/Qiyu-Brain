@@ -19,8 +19,8 @@
 
 | 技能 | 作用 | 产出 |
 | --- | --- | --- |
-| [task-router](task-router/SKILL.md) | 读画像 → 消歧 → 定严谨度 → 选路由 → 出契约 → 复述确认 | task_contract、routing_decision、open_questions |
-| [preference-distillation](preference-distillation/SKILL.md) | 从交互里归纳**稳定**偏好写回 `_profile`，区分一次性要求 | profile_update |
+| [gateway-router](gateway-router/SKILL.md) | 读画像 → 消歧 → 定严谨度 → 选路由 → 出契约 → 复述确认 | task_contract、routing_decision、open_questions |
+| [gateway-preferences](gateway-preferences/SKILL.md) | 从交互里归纳**稳定**偏好写回 `_profile`，区分一次性要求 | profile_update |
 
 ## 约束
 

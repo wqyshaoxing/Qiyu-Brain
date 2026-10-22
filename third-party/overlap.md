@@ -14,13 +14,13 @@
 
 | 他们的技能 | 我们的对应 | 处置 |
 | --- | --- | --- |
-| nature-academic-search | `literature-search` | 保留我们的（有 search-connectors 支撑） |
-| nature-citation | `citation-evidence-audit` | 保留我们的 |
-| nature-ref-verifier | `citation-evidence-audit` | 同上，可参考其核验清单 |
-| nature-figure | `scientific-figure` | 保留我们的；绘图实现细节可参考 |
-| nature-polishing | `zh-en-translation` | 保留我们的（有术语表与保真规则） |
-| nature-writing | `paper-draft` | 保留我们的 |
-| nature-reader | `pdf-extract` | 保留我们的（脚本已实测可跑） |
+| nature-academic-search | `academic-literature-search` | 保留我们的（有 shared-scholarly-search 支撑） |
+| nature-citation | `academic-citation-audit` | 保留我们的 |
+| nature-ref-verifier | `academic-citation-audit` | 同上，可参考其核验清单 |
+| nature-figure | `academic-figure` | 保留我们的；绘图实现细节可参考 |
+| nature-polishing | `academic-translate` | 保留我们的（有术语表与保真规则） |
+| nature-writing | `academic-paper-draft` | 保留我们的 |
+| nature-reader | `academic-pdf-extract` | 保留我们的（脚本已实测可跑） |
 | nature-downloader | — | **缺口**：我们靠 BoomSkills 的 paper-search，未整合 |
 | nature-reviewer | — | **缺口**：我们没有「以审稿人视角挑毛病」这一环 |
 | nature-response | — | **缺口**：没有审稿意见回复（rebuttal）技能 |
@@ -31,10 +31,10 @@
 
 | 他们的技能 | 我们的对应 | 处置 |
 | --- | --- | --- |
-| academic-paper | `paper-draft` | 保留我们的 |
+| academic-paper | `academic-paper-draft` | 保留我们的 |
 | academic-paper-reviewer | — | **缺口**，与 nature-reviewer 同类 |
-| academic-pipeline | `gateway/task-router` + `deps` 链 | 保留我们的（依赖图即流水线） |
-| deep-research | `literature-search` + `evidence-synthesis` | 保留我们的 |
+| academic-pipeline | `gateway/gateway-router` + `deps` 链 | 保留我们的（依赖图即流水线） |
+| deep-research | `academic-literature-search` + `academic-claim-map` | 保留我们的 |
 
 ## scientific-agent-skills
 
@@ -44,7 +44,7 @@
 
 1. **不引入**上述第三方技能的任何 `SKILL.md`——保留我们的版本，避免两套判断并存。
 2. **不复制**它们的脚本；需要时按 `deps` 或工具路由调用。
-3. 真正的重复在**本仓库与 BoomSkills 之间**：`zotero-import`、`pdf-extract`、`latex-word-sync`、`zh-en-translation`、`scientific-figure` 两边都有。BoomSkills 那五份已标注「已迁移」，本仓库为唯一维护版本。
+3. 真正的重复在**本仓库与 BoomSkills 之间**：`academic-zotero-archive`、`academic-pdf-extract`、`academic-latex-sync`、`academic-translate`、`academic-figure` 两边都有。BoomSkills 那五份已标注「已迁移」，本仓库为唯一维护版本。
 
 ## 值得补的四个缺口（按依赖图位置）
 

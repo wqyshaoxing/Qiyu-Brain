@@ -50,7 +50,7 @@ third-party/
 ```json
 {
   "registry_id": "obra-superpowers",
-  "skill": "coding/reasoning/architecture-tradeoff",
+  "skill": "coding/reasoning/coding-architecture-choice",
   "kind": "idea",
   "what": "借用了「先写选项矩阵再决策」的流程结构，未复制文本",
   "files": [],

@@ -14,15 +14,15 @@
 | `third-party/` | 外部现成技能与仓库的登记清单，只存链接不存代码 | 不是技能，不参与路由 |
 | `_core/`、`_memory/`、`_eval/`、`_profile/` | 契约、沉淀、样例、用户状态 | 不是技能，不参与路由 |
 
-`_profile/` 是**状态**不是技能：你的身份、偏好、硬约束。技能只读它，写入必须走 `preference-distillation` 并留下来源。
+`_profile/` 是**状态**不是技能：你的身份、偏好、硬约束。技能只读它，写入必须走 `gateway-preferences` 并留下来源。
 
 ## 结构
 
 ```text
 Qiyu-Brain/
 ├─ gateway/                阶段 0，扁平分区
-│  ├─ task-router/
-│  └─ preference-distillation/
+│  ├─ gateway-router/
+│  └─ gateway-preferences/
 ├─ shared/                 通用阶段分区，跨领域复用（技能暂缺）
 │  ├─ input/  reasoning/  output/  verify/
 ├─ academic-research/      领域分区
@@ -45,7 +45,7 @@ Qiyu-Brain/
 
 ## 阶段 0：gateway
 
-任何请求进来先过 `task-router`：读 `_profile/` → 复述并消歧 → 定严谨度档位 → 选领域与入口技能 → 出契约 → 复述确认。没有这一步，领域技能会在「完成」没被定义的情况下开工。
+任何请求进来先过 `gateway-router`：读 `_profile/` → 复述并消歧 → 定严谨度档位 → 选领域与入口技能 → 出契约 → 复述确认。没有这一步，领域技能会在「完成」没被定义的情况下开工。
 
 它刻意不放进任何领域：放进去就要复制四份，放进 `_core` 又会被当成工具库忽略。
 
@@ -82,7 +82,7 @@ python scripts/validate.py
 本项目**只做技能**，不提供 MCP server，也不做宿主插件。体系边界写在 `SKILL.md` 里：
 
 `yaml
-deps: [task-router]        # 前置技能
+deps: [gateway-router]        # 前置技能
 consumes: [task_contract]  # 上游产物角色
 produces: [query_plan, result_matrix, search_log]
 `
@@ -96,12 +96,12 @@ produces: [query_plan, result_matrix, search_log]
 当前依赖图：
 
 `	ext
-task-router ─┬─ literature-search → evidence-synthesis → paper-draft → citation-evidence-audit
-             ├─ requirement-intake → architecture-tradeoff → feature-implement → regression-gate
-             └─ preference-distillation
+gateway-router ─┬─ academic-literature-search → academic-claim-map → academic-paper-draft → academic-citation-audit
+             ├─ coding-requirement-intake → coding-architecture-choice → coding-feature-build → coding-regression-gate
+             └─ gateway-preferences
 
-search-connectors   (独立)
-web-search          (独立)
+shared-scholarly-search   (独立)
+shared-web-search          (独立)
 `
 
 **调用方式由 agent 决定。** 技能声明要什么、给什么、什么算完成，不规定用哪个工具、拼哪条命令。`runtime.json` 里的脚本是**参考实现**，不是唯一路径。
@@ -150,7 +150,7 @@ DSH 的技能发现顺序（源码实测）：
 ## 现状
 
 - 10 个契约骨架：gateway 2 个、academic-research 4 个、coding 4 个。全部 `mode: agent`，**尚无脚本动作**；`runtime.json` 的 `todo` 写明要落地的动作。
-- `shared/` 已落两个基石技能：`search-connectors`（六源学术检索）与 `web-search`（网页检索，当前 7 个可用源）。都只用标准库，都能脱离路由单独跑。
+- `shared/` 已落两个基石技能：`shared-scholarly-search`（六源学术检索）与 `shared-web-search`（网页检索，当前 7 个可用源）。都只用标准库，都能脱离路由单独跑。
 - Zotero 与 MinerU 的 key 已配置，但消费方是 BoomSkills 的 `zotero-batch-pdf-import` 与 `mineru-pdf-to-markdown`；Qiyu-Brain 通过 `config/schema.json` 的 `skills` 字段指向外部技能，不重复实现。
 - `third-party/skill-anatomy.md` 记录了 7 个现成搜索 skill 的解剖结论：哪些章节反复出现、哪 6 条值得抄、哪 3 条不抄。
 - third-party 登记 **86 个外部仓库**：47 个已深核（commit + LICENSE + 文件数 + SKILL.md 数量），39 个仅核存在性（`git ls-remote`）。star 数无法核实（`web_fetch` 拒绝非公网 IP）。`provenance.json` 目前为空。

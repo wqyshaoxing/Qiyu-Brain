@@ -6,8 +6,8 @@
 
 | 你可能会说 | 技能 | 产出 |
 | --- | --- | --- |
-| （任何请求开始前，包括看起来很简单的那种） | [task-router](gateway/task-router/SKILL.md) | task_contract、routing_decision、open_questions |
-| 以后都这样 / 我不喜欢这种写法 / 记住我的偏好 | [preference-distillation](gateway/preference-distillation/SKILL.md) | profile_update → `_profile/` |
+| （任何请求开始前，包括看起来很简单的那种） | [gateway-router](gateway/gateway-router/SKILL.md) | task_contract、routing_decision、open_questions |
+| 以后都这样 / 我不喜欢这种写法 / 记住我的偏好 | [gateway-preferences](gateway/gateway-preferences/SKILL.md) | profile_update → `_profile/` |
 
 它必须在领域技能之前运行。跳过它，领域技能就在「完成」尚未定义的情况下开工了。
 
@@ -15,24 +15,24 @@
 
 | 你可能会说 | 阶段 | 技能 | 主要产出 |
 | --- | --- | --- | --- |
-| 帮我查一下这个方向有哪些工作 / 建个文献矩阵 | input | [literature-search](academic-research/input/literature-search/SKILL.md) | query_plan、literature_matrix、search_log |
-| 这些文献互相矛盾吗 / 我的论断有证据吗 | reasoning | [evidence-synthesis](academic-research/reasoning/evidence-synthesis/SKILL.md) | evidence_map、contradiction_log |
-| 帮我写引言/方法/讨论 | output | [paper-draft](academic-research/output/paper-draft/SKILL.md) | draft、claim_index |
-| 把查到的 PDF 归档进 Zotero，并核对真的进去了 | input | [zotero-import](academic-research/input/zotero-import/SKILL.md) | import_result、import_report |
-| 这篇 PDF 帮我转成 markdown 和图片 | input | [pdf-extract](academic-research/input/pdf-extract/SKILL.md) | full_md、extraction_report |
-| LaTeX 和 Word 两边要同步，别改错公式 | output | [latex-word-sync](academic-research/output/latex-word-sync/SKILL.md) | latex、word、manifest、qa |
-| 帮我翻译成中/英文，别译走意思 | output | [zh-en-translation](academic-research/output/zh-en-translation/SKILL.md) | translated_draft、terminology_map、qa_record |
-| 做一张能投出去的图 / 机制示意图 | output | [scientific-figure](academic-research/output/scientific-figure/SKILL.md) | figure_source、figure_preview、figure_qa |
-| 投稿前核一遍引用，别引错 | verify | [citation-evidence-audit](academic-research/verify/citation-evidence-audit/SKILL.md) | audit_report、evidence_bundle |
+| 帮我查一下这个方向有哪些工作 / 建个文献矩阵 | input | [academic-literature-search](academic-research/input/academic-literature-search/SKILL.md) | query_plan、literature_matrix、search_log |
+| 这些文献互相矛盾吗 / 我的论断有证据吗 | reasoning | [academic-claim-map](academic-research/reasoning/academic-claim-map/SKILL.md) | evidence_map、contradiction_log |
+| 帮我写引言/方法/讨论 | output | [academic-paper-draft](academic-research/output/academic-paper-draft/SKILL.md) | draft、claim_index |
+| 把查到的 PDF 归档进 Zotero，并核对真的进去了 | input | [academic-zotero-archive](academic-research/input/academic-zotero-archive/SKILL.md) | import_result、import_report |
+| 这篇 PDF 帮我转成 markdown 和图片 | input | [academic-pdf-extract](academic-research/input/academic-pdf-extract/SKILL.md) | full_md、extraction_report |
+| LaTeX 和 Word 两边要同步，别改错公式 | output | [academic-latex-sync](academic-research/output/academic-latex-sync/SKILL.md) | latex、word、manifest、qa |
+| 帮我翻译成中/英文，别译走意思 | output | [academic-translate](academic-research/output/academic-translate/SKILL.md) | translated_draft、terminology_map、qa_record |
+| 做一张能投出去的图 / 机制示意图 | output | [academic-figure](academic-research/output/academic-figure/SKILL.md) | figure_source、figure_preview、figure_qa |
+| 投稿前核一遍引用，别引错 | verify | [academic-citation-audit](academic-research/verify/academic-citation-audit/SKILL.md) | audit_report、evidence_bundle |
 
 ## coding
 
 | 你可能会说 | 阶段 | 技能 | 主要产出 |
 | --- | --- | --- | --- |
-| 需求太模糊，先帮我把范围问清楚 | input | [requirement-intake](coding/input/requirement-intake/SKILL.md) | requirement_spec、open_questions |
-| 这个功能该怎么设计 / 两个方案选哪个 | reasoning | [architecture-tradeoff](coding/reasoning/architecture-tradeoff/SKILL.md) | option_matrix、decision_record |
-| 按这个 spec 实现 | output | [feature-implement](coding/output/feature-implement/SKILL.md) | patch、test_report、change_summary |
-| 改完别把别的地方弄坏 | verify | [regression-gate](coding/verify/regression-gate/SKILL.md) | verification_report、residual_risks |
+| 需求太模糊，先帮我把范围问清楚 | input | [coding-requirement-intake](coding/input/coding-requirement-intake/SKILL.md) | requirement_spec、open_questions |
+| 这个功能该怎么设计 / 两个方案选哪个 | reasoning | [coding-architecture-choice](coding/reasoning/coding-architecture-choice/SKILL.md) | option_matrix、decision_record |
+| 按这个 spec 实现 | output | [coding-feature-build](coding/output/coding-feature-build/SKILL.md) | patch、test_report、change_summary |
+| 改完别把别的地方弄坏 | verify | [coding-regression-gate](coding/verify/coding-regression-gate/SKILL.md) | verification_report、residual_risks |
 
 ## livebetter
 
@@ -48,8 +48,8 @@
 
 | 你可能会说 | 阶段 | 技能 | 主要产出 |
 | --- | --- | --- | --- |
-| 帮我查一下有哪些论文 / 多源检索一遍 | input | [search-connectors](shared/input/search-connectors/SKILL.md) | query_plan、result_matrix、search_log |
-| 上网查一下 / 最新的是什么 / 官方文档怎么说 | input | [web-search](shared/input/web-search/SKILL.md) | query_plan、result_matrix、search_log |
+| 帮我查一下有哪些论文 / 多源检索一遍 | input | [shared-scholarly-search](shared/input/shared-scholarly-search/SKILL.md) | query_plan、result_matrix、search_log |
+| 上网查一下 / 最新的是什么 / 官方文档怎么说 | input | [shared-web-search](shared/input/shared-web-search/SKILL.md) | query_plan、result_matrix、search_log |
 
 `shared/reasoning`、`shared/output`、`shared/verify` 三个阶段目录已建，**尚未放入技能**。
 

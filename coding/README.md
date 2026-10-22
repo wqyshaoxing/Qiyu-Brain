@@ -9,14 +9,14 @@
 
 ## 阶段与技能
 
-入口在 `gateway/task-router`，它会先产出 `task_contract`；`requirement-intake` 消费该契约，不重复追问目标。
+入口在 `gateway/gateway-router`，它会先产出 `task_contract`；`coding-requirement-intake` 消费该契约，不重复追问目标。
 
 | 阶段 | 技能 | 一句话 |
 | --- | --- | --- |
-| input | [requirement-intake](input/requirement-intake/SKILL.md) | 把模糊需求变成可验收的 spec，含非目标 |
-| reasoning | [architecture-tradeoff](reasoning/architecture-tradeoff/SKILL.md) | 用约束比较方案，记录决策与回退成本 |
-| output | [feature-implement](output/feature-implement/SKILL.md) | 最小改动 + 测试 + 可核对的 diff 摘要 |
-| verify | [regression-gate](verify/regression-gate/SKILL.md) | 先复现再修，跑测试矩阵，查夹带改动 |
+| input | [coding-requirement-intake](input/coding-requirement-intake/SKILL.md) | 把模糊需求变成可验收的 spec，含非目标 |
+| reasoning | [coding-architecture-choice](reasoning/coding-architecture-choice/SKILL.md) | 用约束比较方案，记录决策与回退成本 |
+| output | [coding-feature-build](output/coding-feature-build/SKILL.md) | 最小改动 + 测试 + 可核对的 diff 摘要 |
+| verify | [coding-regression-gate](verify/coding-regression-gate/SKILL.md) | 先复现再修，跑测试矩阵，查夹带改动 |
 
 ## 与工具链的分工
 

@@ -6,9 +6,9 @@
 
 | 分区 | 是什么 | 例子 |
 | --- | --- | --- |
-| `gateway/` | 阶段 0：路由与契约 | task-router |
+| `gateway/` | 阶段 0：路由与契约 | gateway-router |
 | `shared/` | 通用动作，**可执行** | 通用检索适配器、文档抽取 |
-| `academic-research/` 等 | 领域动作 | literature-search（带学科纳排标准） |
+| `academic-research/` 等 | 领域动作 | academic-literature-search（带学科纳排标准） |
 | `_core/` | 文档契约与模板，**不可执行** | SCHEMA.md |
 
 ## 准入条件（三条都要满足）
@@ -57,7 +57,7 @@
 
 | 阶段 | 技能 | 说明 |
 | --- | --- | --- |
-| input | [search-connectors](input/search-connectors/SKILL.md) | 六源检索、有界重试、DOI 级去重、三者产物留痕。标准库实现，无依赖 |
+| input | [shared-scholarly-search](input/shared-scholarly-search/SKILL.md) | 六源检索、有界重试、DOI 级去重、三者产物留痕。标准库实现，无依赖 |
 | reasoning | — | 候选见 [reasoning/README.md](reasoning/README.md) |
 | output | — | 候选见 [output/README.md](output/README.md) |
 | verify | — | 候选见 [verify/README.md](verify/README.md) |

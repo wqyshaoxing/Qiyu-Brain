@@ -14,8 +14,8 @@
 
 | 候选 | 解决什么 | 状态 |
 | --- | --- | --- |
-| [search-connectors](search-connectors/SKILL.md) | 学术 API 多源检索：arXiv / Crossref / OpenAlex / PubMed / Semantic Scholar / Exa | **已实现** |
-| [web-search](web-search/SKILL.md) | 网页检索八源：DuckDuckGo、Wikipedia、百度、SearXNG、Exa、Tavily、Brave、Serper | **已实现** |
+| [shared-scholarly-search](shared-scholarly-search/SKILL.md) | 学术 API 多源检索：arXiv / Crossref / OpenAlex / PubMed / Semantic Scholar / Exa | **已实现** |
+| [shared-web-search](shared-web-search/SKILL.md) | 网页检索八源：DuckDuckGo、Wikipedia、百度、SearXNG、Exa、Tavily、Brave、Serper | **已实现** |
 | code-search | 代码与实现检索：GitHub code search、grep.app、包注册表 | 待定 |
 | doc-search | 指定文档站内的检索与版本对齐 | 待定 |
 | feed-watch | 订阅源与更新追踪：RSS、arXiv 新文、仓库 release | 待定 |

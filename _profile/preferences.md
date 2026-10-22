@@ -1,6 +1,6 @@
 # 偏好
 
-> 每条必须带 `source` 和 `confidence`。没有来源的条目视为猜测，`task-router` 不应据此改变行为。
+> 每条必须带 `source` 和 `confidence`。没有来源的条目视为猜测，`gateway-router` 不应据此改变行为。
 
 ## 沟通
 

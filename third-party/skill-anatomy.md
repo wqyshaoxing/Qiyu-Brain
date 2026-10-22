@@ -43,10 +43,10 @@
 
 ## 不打算照抄的三条
 
-1. **把编排塞进搜索技能**（exa 的 4 档分诊 + 子代理扇出）。我们的路由和严谨度定档在 `gateway/task-router`，搜索技能只做取数。理由：编排一旦写进每个技能，就会和路由重复且互相矛盾。
+1. **把编排塞进搜索技能**（exa 的 4 档分诊 + 子代理扇出）。我们的路由和严谨度定档在 `gateway/gateway-router`，搜索技能只做取数。理由：编排一旦写进每个技能，就会和路由重复且互相矛盾。
 2. **六道闸门**。它适合「综述级交付」，不适合每次检索。我们把它挪到 verify 层按需启用。
 3. **用 skill 承载工具文档**（context7 整篇是 CLI 用法）。工具用法应进 `references/`，SKILL.md 只留判断。
 
-## 对我们 `web-search` 的直接结论
+## 对我们 `shared-web-search` 的直接结论
 
 现有 SKILL.md 只覆盖了「怎么跑」，缺了「怎么问、怎么信、怎么不泄露」。本轮补四块：query craft、source quality、hedging/as-of、common mistakes + privacy。
