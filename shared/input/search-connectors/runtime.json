@@ -13,7 +13,19 @@
         "CROSSREF_MAILTO"
       ],
       "effects": "向公开学术 API 发起有界查询，写出 query-plan.md、results.csv、search-log.json；不下载全文，不改动目录以外的文件。",
-      "plan_supported": true
+      "plan_supported": true,
+      "parameters": {
+        "type": "object",
+        "required": ["query", "out"],
+        "properties": {
+          "query": {"type": "string", "cli": "--query", "description": "检索式；问题应拆成 2-3 个变体分别检索"},
+          "out": {"type": "string", "cli": "--out", "description": "产物目录，写入 query-plan.md / results.csv / search-log.json"},
+          "providers": {"type": "string", "cli": "--providers", "default": "arxiv,crossref,openalex", "description": "逗号分隔；默认为三个免 key 来源"},
+          "limit": {"type": "integer", "cli": "--limit", "default": 20, "minimum": 1, "maximum": 100},
+          "plan": {"type": "boolean", "cli": "--plan", "default": false, "description": "只打印计划，不联网"},
+          "force": {"type": "boolean", "cli": "--force", "default": false, "description": "允许覆盖已有产物"}
+        }
+      }
     }
   ],
   "artifacts": [

@@ -20,7 +20,20 @@
         "LANGSEARCH_API_KEY"
       ],
       "effects": "向选定的搜索引擎发起有界查询，写出 query-plan.md、results.csv、search-log.json；只取摘要，不抓正文，不改动目录以外的文件。",
-      "plan_supported": true
+      "plan_supported": true,
+      "parameters": {
+        "type": "object",
+        "required": ["query", "out"],
+        "properties": {
+          "query": {"type": "string", "cli": "--query", "description": "检索式，描述性短语优于单词"},
+          "out": {"type": "string", "cli": "--out", "description": "产物目录，写入 query-plan.md / results.csv / search-log.json"},
+          "providers": {"type": "string", "cli": "--providers", "default": "free", "description": "逗号分隔；free 表示仅免 key 源，付费源必须显式点名"},
+          "limit": {"type": "integer", "cli": "--limit", "default": 10, "minimum": 1, "maximum": 50},
+          "engine": {"type": "string", "cli": "--engine", "description": "仅 searxng 使用，如 baidu,google"},
+          "plan": {"type": "boolean", "cli": "--plan", "default": false, "description": "只打印计划，不联网"},
+          "force": {"type": "boolean", "cli": "--force", "default": false, "description": "允许覆盖已有产物"}
+        }
+      }
     }
   ],
   "artifacts": [

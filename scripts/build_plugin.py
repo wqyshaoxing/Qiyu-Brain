@@ -106,6 +106,8 @@ def _describe(skill: Path, partition: str) -> dict:
         except json.JSONDecodeError:
             runtime = {}
     actions = [a for a in runtime.get("actions", []) if isinstance(a, dict)]
+    parameters = next((a.get("parameters") for a in actions
+                       if isinstance(a.get("parameters"), dict)), None)
     return {
         "name": meta.get("name") or skill.name,
         "partition": partition,
@@ -114,6 +116,7 @@ def _describe(skill: Path, partition: str) -> dict:
         "actions": [a.get("script") for a in actions if a.get("script")],
         "optional_requires": sorted({k for a in actions for k in a.get("optional_requires", [])}),
         "artifacts": [a.get("role") for a in runtime.get("artifacts", []) if isinstance(a, dict)],
+        "parameters": parameters,
     }
 
 
@@ -195,6 +198,7 @@ def build(root: Path, out: Path, hosts: list[str], version: str) -> int:
                 "actions": skill["actions"],
                 "artifacts": skill["artifacts"],
                 "optional_requires": skill["optional_requires"],
+                "parameters": skill.get("parameters"),
             })
 
         for extra in (".env.example", "README.md"):

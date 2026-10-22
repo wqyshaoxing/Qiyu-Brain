@@ -27,6 +27,21 @@ One interface over arXiv, Crossref, OpenAlex, PubMed, Semantic Scholar, and Exa.
 - Does not overwrite earlier results without `--force`.
 - Does not require any API key for the free providers. Paid providers are opt-in and off unless their key is configured.
 
+## Invocation
+
+`python scripts/search.py` — 与 `runtime.json` 的 `parameters` 一一对应：
+
+| param | cli | type | default | meaning |
+| --- | --- | --- | --- | --- |
+| query | `--query` | string | **required** | 检索式；问题拆成 2–3 个变体 |
+| out | `--out` | string | **required** | 产物目录 |
+| providers | `--providers` | string | `arxiv,crossref,openalex` | 逗号分隔 |
+| limit | `--limit` | integer | 20 | 每个来源条数，1–100 |
+| plan | `--plan` | flag | false | 只打印计划，不联网 |
+| force | `--force` | flag | false | 允许覆盖已有产物 |
+
+布尔参数是 `store_true`：出现即真，不要写成 `--plan true`。
+
 ## Workflow
 
 1. `--plan` first: it prints the providers that will run, which keys are present or missing, and the output paths, without touching the network.
@@ -35,8 +50,8 @@ One interface over arXiv, Crossref, OpenAlex, PubMed, Semantic Scholar, and Exa.
 4. Write the query and its intent. If the query is a question, split it into 2–3 query variants rather than one long sentence.
 5. Run with an explicit provider list and limit. Defaults are conservative: max 20 results per provider, 1 request per second per provider.
 6. Read `search-log.json` before trusting the matrix. Failed or rate-limited providers are coverage gaps, not empty results.
-5. Deduplicate by DOI, then arXiv ID, then normalized title + year. Collisions that cannot be resolved go to the log, never merged silently.
-6. Hand the matrix to the caller; leave screening decisions to it.
+7. Deduplicate by DOI, then arXiv ID, then normalized title + year. Collisions that cannot be resolved go to the log, never merged silently.
+8. Hand the matrix to the caller; leave screening decisions to it.
 
 ## Artifacts
 

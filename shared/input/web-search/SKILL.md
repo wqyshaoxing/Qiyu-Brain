@@ -58,6 +58,22 @@ A backend that cannot run is recorded with its reason. Silent substitution is no
 - **Time words need dates.** "latest" means nothing without an as-of date; prefer `2026` or a date range in the query.
 - **Queries are outbound data.** Never put API keys, credentials, private notes, or unpublished results in a query.
 
+## Invocation
+
+`python scripts/web_search.py` — 与 `runtime.json` 的 `parameters` 一一对应：
+
+| param | cli | type | default | meaning |
+| --- | --- | --- | --- | --- |
+| query | `--query` | string | **required** | 检索式；描述性短语优于单词 |
+| out | `--out` | string | **required** | 产物目录 |
+| providers | `--providers` | string | `free` | 逗号分隔；付费源必须显式点名 |
+| limit | `--limit` | integer | 10 | 每个来源条数，1–50 |
+| plan | `--plan` | flag | false | 只打印计划，不联网 |
+| force | `--force` | flag | false | 允许覆盖已有产物 |
+| engine | `--engine` | string | — | 仅 searxng 使用，如 `baidu,google` |
+
+布尔参数是 `store_true`：出现即真，不要写成 `--plan true`。
+
 ## Workflow
 
 1. `--list-providers`, then `--plan` to see which backends will actually run and which keys are missing.

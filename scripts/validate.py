@@ -12,7 +12,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -77,6 +79,61 @@ def parse_frontmatter(block: str) -> dict[str, object]:
         else:
             data[key] = value.strip("'\"")
     return data
+
+
+def _check_parameters(action: dict, where: str, skill_dir: Path, script: str | None,
+                      errors: list[str], warnings: list[str]) -> None:
+    """Validate the declared parameter schema and keep it in sync with --help.
+
+    The schema is what a tool-registering host turns into a native tool; the
+    cli binding is what a shell-only host turns into argv. Both must match the
+    code, so the script's own --help is the executable source of truth.
+    """
+    params = action.get("parameters")
+    if params is None:
+        return
+    if not isinstance(params, dict):
+        errors.append(f"{where}.parameters 必须是对象")
+        return
+    props = params.get("properties")
+    required = params.get("required", [])
+    if not isinstance(props, dict) or not props:
+        errors.append(f"{where}.parameters.properties 不能为空")
+        return
+    if not isinstance(required, list):
+        errors.append(f"{where}.parameters.required 必须是数组")
+        required = []
+    for name in required:
+        if name not in props:
+            errors.append(f"{where}.parameters.required 含未声明参数 '{name}'")
+    for pname, pspec in props.items():
+        if not isinstance(pspec, dict):
+            errors.append(f"{where}.parameters.properties.{pname} 必须是对象")
+            continue
+        if "type" not in pspec:
+            errors.append(f"{where}.parameters.properties.{pname} 缺少 type")
+        cli = pspec.get("cli")
+        if not isinstance(cli, str) or not cli.startswith("--"):
+            errors.append(f"{where}.parameters.properties.{pname}.cli 必须以 -- 开头")
+
+    if not script:
+        return
+    script_path = skill_dir / script
+    if not script_path.is_file():
+        return
+    try:
+        proc = subprocess.run([sys.executable, str(script_path), "--help"],
+                              capture_output=True, text=True, encoding="utf-8",
+                              errors="replace", timeout=25,
+                              env={**os.environ, "PYTHONIOENCODING": "utf-8"})
+        help_text = (proc.stdout or "") + (proc.stderr or "")
+    except Exception as exc:  # noqa: BLE001 - introspection is best effort
+        warnings.append(f"{where}: 无法运行脚本 --help（{type(exc).__name__}），跳过参数同步检查")
+        return
+    for pname, pspec in props.items():
+        cli = pspec.get("cli") if isinstance(pspec, dict) else None
+        if isinstance(cli, str) and cli not in help_text:
+            errors.append(f"{where}: 参数 '{pname}' 绑定 {cli}，但脚本 --help 中没有该参数")
 
 
 def check_skill(skill_dir: Path, domain: str, stage_dir: str | None,
@@ -203,6 +260,7 @@ def check_skill(skill_dir: Path, domain: str, stage_dir: str | None,
             errors.append(f"{where}.script 指向的文件不存在：{script}")
         if "external" in action and not isinstance(action["external"], bool):
             errors.append(f"{where}.external 必须是布尔值")
+        _check_parameters(action, where, skill_dir, script, errors, warnings)
 
     artifacts = spec.get("artifacts")
     if not isinstance(artifacts, list):

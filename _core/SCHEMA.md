@@ -110,6 +110,30 @@ deps: []
 | `requires` | 依赖列表，如 `network`、`MINERU_API_KEY` |
 | `effects` | 真实影响，一句话；`--plan` 展示用 |
 | `plan_supported` | 是否支持只预览不执行 |
+| `parameters` | JSON Schema 参数表，每项带 `cli` 绑定到实际命令行参数 |
+
+#### parameters
+
+模型没有工具 schema 时只能靠猜参数。`parameters` 是**给模型和宿主看的接口**：
+
+```json
+"parameters": {
+  "type": "object",
+  "required": ["query", "out"],
+  "properties": {
+    "query": {"type": "string", "cli": "--query", "description": "检索式"},
+    "plan":  {"type": "boolean", "cli": "--plan", "default": false}
+  }
+}
+```
+
+规则：
+
+- 支持动态注册工具的宿主，可把这份 schema 直接变成原生工具（类型校验、必填校验由宿主完成）。
+- 只能走 shell 的宿主，agent 据此拼 argv，不必先跑 `--help` 试错。
+- `cli` 必须与脚本 `--help` 中出现的一致，`validate.py` 会实际执行脚本核对——这是可执行的一致性检查，不是文档约定。
+- 布尔参数对应 argparse 的 `store_true`：出现即真，不要传 `--plan true`。
+- SKILL.md 的 `## Invocation` 表格是同一份信息的人类可读镜像，改一处必须改另一处。
 
 ## 状态
 
