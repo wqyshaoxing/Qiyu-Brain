@@ -23,31 +23,16 @@ Full source survey, including what is unreachable and why: [references/providers
 
 ## When not to use
 
-| Situation | Go to |
-| --- | --- |
-| Literature, preprints, citation metadata | `search-connectors` |
-| You need the page body, not the snippet | a fetch/extract step |
-| Deciding how deep to go, or how rigorous | `gateway/task-router` (rigor level) |
-| Judging whether a claim is true | reasoning layer, not here |
-
-Orchestration deliberately lives outside this skill. It retrieves; it does not decide scope.
+`search-connectors` for literature; a fetch/extract step for page bodies; `gateway/task-router` for depth and rigor; the reasoning layer for truth. Orchestration lives outside: this skill retrieves, it does not decide scope.
 
 ## Backends
 
-| Backend | Key | Status in this repo |
-| --- | --- | --- |
-| DuckDuckGo lite | none | working, HTML parsing (fragile) |
-| Wikipedia | none | working |
-| Hacker News (Algolia) | none | working |
-| StackExchange | none | working; `--engine` selects the site |
-| Exa / Tavily / Firecrawl / Brave | key | reachable, skipped until key is configured |
-| Jina / Firecrawl / Linkup / Valyu / Kagi / Google CSE / 博查 / 智谱 / LangSearch | key | adapters implemented, response shape unverified until a real key is used |
-| SearXNG | `SEARXNG_URL` | self-hosted only; public instances disable JSON |
-| Baidu | none | endpoint blocked or anti-bot; reported as failed, never as empty |
+- **No key**: DuckDuckGo (HTML, fragile), Wikipedia, Hacker News, StackExchange.
+- **Key required**: Exa, Tavily, Firecrawl, Brave, Jina, Linkup, Google CSE, LangSearch. Skipped until configured, never silently replaced.
+- **Self-hosted**: SearXNG via `SEARXNG_URL`; public instances disable JSON.
+- **Baidu**: blocked or anti-bot here; reported as `failed`, never as empty.
 
-`--providers free` runs the four no-key backends only. `--doctor` probes every backend and reports `ok` / `missing` (no key) / `fail` (request or parse error) with the raw error text.
-
-A backend that cannot run is recorded with its reason. Silent substitution is not allowed.
+`--providers free` runs the first group only. `--doctor` probes every backend and reports `ok` / `missing` / `fail` with the raw error text.
 
 ## Query craft
 
@@ -79,10 +64,10 @@ A backend that cannot run is recorded with its reason. Silent substitution is no
 1. `--list-providers`, then `--plan` to see which backends will actually run and which keys are missing.
 2. Run with no `--providers` flag: the default is `free` — DuckDuckGo, Wikipedia, HN, StackExchange. Paid backends must be named explicitly; they are never enabled by default.
 3. Add keyed engines only when coverage justifies the cost.
-3. Run with an explicit limit. Defaults are deliberately small; more rows rarely mean more information.
-4. Read `search-log.json` before the matrix: `skipped` (no key), `empty` (ran, nothing), `failed` (challenge, block, parse change) are three different facts.
-5. Deduplicate in two passes: normalized URL, then identical normalized title. Regional mirrors (`in.` / `za.` / `au.` of the same article) share a title but not a URL, so the title pass merges them and keeps the others in `alt_urls`. Blocked pages (WAF, 403, captcha interstitials) are dropped and counted as `filtered_noise` — dropped, never silently.
-6. Hand the rows to the caller. Reading pages, screening, and citing happen downstream.
+4. Run with an explicit limit. Defaults are deliberately small; more rows rarely mean more information.
+5. Read `search-log.json` before the matrix: `skipped` (no key), `empty` (ran, nothing), `failed` (challenge, block, parse change) are three different facts.
+6. Deduplicate in two passes: normalized URL, then identical normalized title. Regional mirrors (`in.` / `za.` / `au.` of the same article) share a title but not a URL, so the title pass merges them and keeps the others in `alt_urls`. Blocked pages (WAF, 403, captcha interstitials) are dropped and counted as `filtered_noise` — dropped, never silently.
+7. Hand the rows to the caller. Reading pages, screening, and citing happen downstream.
 
 ## Boundary
 

@@ -256,6 +256,26 @@ def _install_hint(host: str, spec: dict) -> str:
     return "copy skills/<name> into the host's skills directory and reload"
 
 
+def install_skills(src: Path, dest_root: Path, force: bool) -> int:
+    """Copy built skill dirs into a host skills root (one dir per skill)."""
+    if not src.is_dir():
+        print(f"bundle skills dir not found: {src}", file=sys.stderr)
+        return 1
+    dest_root.mkdir(parents=True, exist_ok=True)
+    installed = skipped = 0
+    for skill in sorted(p for p in src.iterdir() if p.is_dir()):
+        target = dest_root / skill.name
+        if target.exists() and not force:
+            skipped += 1
+            continue
+        if target.exists():
+            shutil.rmtree(target)
+        shutil.copytree(skill, target)
+        installed += 1
+    print(f"installed {installed} skills -> {dest_root} (skipped {skipped} existing; use --force to replace)")
+    return 0
+
+
 def check(root: Path, out: Path) -> int:
     problems: list[str] = []
     built = [d for d in out.iterdir() if d.is_dir()] if out.is_dir() else []
@@ -301,6 +321,10 @@ def main(argv: list[str] | None = None) -> int:
                         help=f"comma separated; known: {', '.join(HOSTS)}")
     parser.add_argument("--version", default=VERSION)
     parser.add_argument("--check", action="store_true", help="verify dist instead of building")
+    parser.add_argument("--install", metavar="DEST", default=None,
+                        help="after building, copy skills into a host skills root (DEST/<name>/)")
+    parser.add_argument("--force", action="store_true",
+                        help="with --install, replace existing skill dirs")
     args = parser.parse_args(argv)
 
     root = Path(args.root).resolve() if args.root else Path(__file__).resolve().parent.parent
@@ -309,7 +333,10 @@ def main(argv: list[str] | None = None) -> int:
         return check(root, out)
     out.mkdir(parents=True, exist_ok=True)
     hosts = [h.strip() for h in args.hosts.split(",") if h.strip()]
-    return build(root, out, hosts, args.version)
+    rc = build(root, out, hosts, args.version)
+    if args.install:
+        rc = max(rc, install_skills(out / "generic" / "skills", Path(args.install).resolve(), args.force))
+    return rc
 
 
 if __name__ == "__main__":

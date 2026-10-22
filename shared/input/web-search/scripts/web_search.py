@@ -62,9 +62,27 @@ _last_call: dict[str, float] = {}
 LAST_ERROR: dict[str, str] = {}
 
 
-def load_env() -> None:
+def env_files() -> list[Path]:
+    """Config lookup order.
+
+    An installed skill lives under a host skills root, far from the repo where
+    .env sits. An explicit QIYU_ENV_FILE (highest priority) and a user-level
+    fallback (~/.dsh/qiyu.env) are therefore required for the installed copy
+    to see any keys at all.
+    """
     here = Path.cwd().resolve()
-    for path in [here / ".env"] + [p / ".env" for p in list(here.parents)[:4]]:
+    candidates = [p / ".env" for p in [here] + list(here.parents)[:4]]
+    explicit = os.environ.get("QIYU_ENV_FILE")
+    if explicit:
+        candidates.insert(0, Path(explicit).expanduser())
+    dsh_home = Path(os.environ.get("DSH_HOME") or (Path.home() / ".dsh"))
+    candidates.append(dsh_home / "qiyu.env")
+    return candidates
+
+
+def load_env() -> None:
+    """Read every config file found; real environment variables always win."""
+    for path in env_files():
         if not path.is_file():
             continue
         for raw in path.read_text(encoding="utf-8-sig").splitlines():

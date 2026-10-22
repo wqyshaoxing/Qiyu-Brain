@@ -51,9 +51,19 @@ _last_call: dict[str, float] = {}
 # ---------------------------------------------------------------- environment
 
 def load_env() -> None:
-    """Read .env from cwd or any parent up to 4 levels. Never overrides real env."""
+    """Read every config file found; real environment variables always win.
+
+    Order: QIYU_ENV_FILE, then .env from cwd up to 4 parents, then
+    ~/.dsh/qiyu.env — the last one is what lets an installed skill (living
+    under a host skills root, far from the repo) still see its keys.
+    """
     here = Path.cwd().resolve()
-    candidates = [here / ".env"] + [p / ".env" for p in list(here.parents)[:4]]
+    candidates = [p / ".env" for p in [here] + list(here.parents)[:4]]
+    explicit = os.environ.get("QIYU_ENV_FILE")
+    if explicit:
+        candidates.insert(0, Path(explicit).expanduser())
+    dsh_home = Path(os.environ.get("DSH_HOME") or (Path.home() / ".dsh"))
+    candidates.append(dsh_home / "qiyu.env")
     for path in candidates:
         if not path.is_file():
             continue

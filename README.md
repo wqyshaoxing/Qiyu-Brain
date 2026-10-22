@@ -94,6 +94,29 @@ python scripts/build_plugin.py --check        # 校验 dist/ 完整性
 
 `dist/` 已 gitignore。构建时会扫描并拒绝任何形似密钥的字符串（`sk-`、`tvly-`、`fc-`、`AIza`），也不会复制 `.env`。
 
+## 装进宿主
+
+```text
+python scripts/build_plugin.py --hosts generic --install <skills-root> [--force]
+```
+
+DSH 的技能发现顺序（源码实测，非文档转述）：
+
+| 优先级 | 来源 | 路径 |
+| --- | --- | --- |
+| 100 | project-dsh | `<projectRoot>/.dsh/skills` |
+| 200 | project-agents | `<projectRoot>/.agents/skills` |
+| 300 | custom | `Config.customSkillDirs` |
+| 400 | user-dsh | `<dshHome>/skills` |
+| 500 | user-agents | `<agentsHome>/skills` |
+
+`projectRoot` 是最近的含 `.git` 的祖先；没有就用当前目录。DSH 的 `watch` 默认为 true，装进去的目录变化会被自动发现，无需重启。
+
+装完有两件事必须注意：
+
+1. **配置要能被找到**。安装位置离仓库很远，`.env` 不再位于向上搜索链里。用 `QIYU_ENV_FILE` 指向它，或复制成 `~/.dsh/qiyu.env`。
+2. **改源码后要重装**。安装是复制而非链接，`--force` 才会覆盖。
+
 ## 与 BoomSkills 的关系
 
 **不重写执行层。** BoomSkills 的 `runs/`、`status`、`finish`、审查哈希绑定已经完整，Qiyu-Brain 复用那套 runtime：
