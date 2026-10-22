@@ -22,7 +22,7 @@ STAGES = ("input", "reasoning", "output", "verify", "gateway")
 LOOP_ROLES = {"entry", "transform", "render", "verify", "route"}
 MODES = {"agent", "script", "hybrid"}
 RESERVED_DIRS = {"scripts", "docs", "_core", "_memory", "_eval", "_profile",
-                 "third-party", "search-out", "dist", "config"}
+                 "third-party", "search-out", "dist", "config", "plugin"}
 REQUIRED_FIELDS = ("name", "description", "domain", "stage", "loop_role",
                    "consumes", "produces", "deps")
 LIST_FIELDS = {"stage", "consumes", "produces", "deps", "sources"}
