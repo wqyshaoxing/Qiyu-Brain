@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "mode": "hybrid",
+  "actions": [
+    {
+      "name": "find",
+      "script": "scripts/web_search.py",
+      "external": true,
+      "requires": ["network"],
+      "optional_requires": [
+        "SEARXNG_URL",
+        "EXA_API_KEY",
+        "TAVILY_API_KEY",
+        "BRAVE_API_KEY",
+        "SERPER_API_KEY"
+      ],
+      "effects": "向选定的搜索引擎发起有界查询，写出 query-plan.md、results.csv、search-log.json；只取摘要，不抓正文，不改动目录以外的文件。",
+      "plan_supported": true
+    }
+  ],
+  "artifacts": [
+    {
+      "role": "query_plan",
+      "kind": "markdown",
+      "required": true,
+      "note": "查询、引擎、条数、因缺配置被跳过的来源，以及「摘要不可信」的声明。"
+    },
+    {
+      "role": "result_matrix",
+      "kind": "csv",
+      "required": true,
+      "note": "按归一化 URL 去重后每行一条：引擎、排名、标题、摘要、抓取时间。"
+    },
+    {
+      "role": "search_log",
+      "kind": "json",
+      "required": true,
+      "note": "逐引擎状态、命中数、耗时、错误原文；skipped / empty / failed 三者必须分开。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "429/5xx 退避重试 3 次后标记 failed，保留部分结果。",
+    "HTML 解析失败时报 parsed 0 results，提示可能是页面结构变化，而不是「没有结果」。",
+    "宿主网络阻断某站点（如百度 SSL 中断）时如实报 unreachable，不得当成空结果。"
+  ],
+  "todo": [
+    "增加 LangSearch 与 Bing News 适配（需先验证响应结构）。",
+    "为 SearXNG 增加 engines 组合预设：中文场景 baidu+sogou、技术场景 google+bing。"
+  ]
+}

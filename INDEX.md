@@ -44,6 +44,7 @@
 | 你可能会说 | 阶段 | 技能 | 主要产出 |
 | --- | --- | --- | --- |
 | 帮我查一下有哪些论文 / 多源检索一遍 | input | [search-connectors](shared/input/search-connectors/SKILL.md) | query_plan、result_matrix、search_log |
+| 上网查一下 / 最新的是什么 / 官方文档怎么说 | input | [web-search](shared/input/web-search/SKILL.md) | query_plan、result_matrix、search_log |
 
 `shared/reasoning`、`shared/output`、`shared/verify` 三个阶段目录已建，**尚未放入技能**。
 

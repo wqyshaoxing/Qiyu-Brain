@@ -88,7 +88,8 @@ python scripts/validate.py
 ## 现状
 
 - 10 个契约骨架：gateway 2 个、academic-research 4 个、coding 4 个。全部 `mode: agent`，**尚无脚本动作**；`runtime.json` 的 `todo` 写明要落地的动作。
-- `shared/` 已落第一个基石技能 `search-connectors`：六源检索、有界重试、DOI 级去重、三件产物留痕，标准库实现。依赖模型与基石契约见 `CONVENTIONS.md`。
+- `shared/` 已落两个基石技能：`search-connectors`（六源学术检索）与 `web-search`（八源网页检索）。都只用标准库，都能脱离路由单独跑。依赖模型与基石契约见 `CONVENTIONS.md`。
+- `third-party/skill-anatomy.md` 记录了 7 个现成搜索 skill 的解剖结论：哪些章节反复出现、哪 6 条值得抄、哪 3 条不抄。
 - third-party 登记 **86 个外部仓库**：47 个已深核（commit + LICENSE + 文件数 + SKILL.md 数量），39 个仅核存在性（`git ls-remote`）。star 数无法核实（`web_fetch` 拒绝非公网 IP）。`provenance.json` 目前为空。
 - `third-party/forum-signals.md` 记录了论坛线索与五条结论，仅到标题级——帖子正文未能读取。
 - livebetter 只有领域边界与安全契约，未建阶段目录。

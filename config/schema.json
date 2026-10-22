@@ -7,7 +7,7 @@
     {
       "id": "search",
       "title": "检索来源",
-      "skills": ["shared/input/search-connectors"],
+      "skills": ["shared/input/search-connectors", "shared/input/web-search"],
       "keys": [
         {
           "name": "CROSSREF_MAILTO",
@@ -87,6 +87,45 @@
           "provider": "MinerU",
           "help": "用于 PDF → Markdown 与图片提取。",
           "signup": "https://mineru.net"
+        }
+      ]
+    },
+    {
+      "id": "web",
+      "title": "网页检索",
+      "skills": ["shared/input/web-search"],
+      "keys": [
+        {
+          "name": "TAVILY_API_KEY",
+          "secret": true,
+          "required": false,
+          "provider": "Tavily",
+          "help": "面向 AI 的检索 API，返回已清洗的内容。未配置则跳过。",
+          "signup": "https://app.tavily.com/home"
+        },
+        {
+          "name": "BRAVE_API_KEY",
+          "secret": true,
+          "required": false,
+          "provider": "Brave Search",
+          "help": "独立索引，不依赖 Google/Bing 转售。免费额度较小。",
+          "signup": "https://brave.com/search/api/"
+        },
+        {
+          "name": "SERPER_API_KEY",
+          "secret": true,
+          "required": false,
+          "provider": "Serper",
+          "help": "Google SERP 转售。合规风险自负，仅用于自查研究用途。",
+          "signup": "https://serper.dev"
+        },
+        {
+          "name": "SEARXNG_URL",
+          "secret": false,
+          "required": false,
+          "provider": "SearXNG",
+          "help": "自建实例地址，如 http://127.0.0.1:8080。公共实例普遍禁用 JSON，因此只认自建。用它可间接覆盖百度、必应、Google。",
+          "signup": "https://docs.searxng.org/admin/installation.html"
         }
       ]
     },
