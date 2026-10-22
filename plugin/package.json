@@ -1,0 +1,29 @@
+{
+  "name": "qiyu-brain",
+  "version": "0.1.0",
+  "description": "Qiyu-Brain skills as a DSH plugin: research and development workflows with retrieval, reasoning, output and verification.",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "skills"
+  ],
+  "keywords": [
+    "dsh-plugin",
+    "skills",
+    "research"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "@deepseek-ai/dsh-skill": "*",
+    "@deepseek-ai/cordis": "*"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-skill": { "optional": true },
+    "@deepseek-ai/cordis": { "optional": true }
+  }
+}

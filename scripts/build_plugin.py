@@ -42,6 +42,10 @@ HOSTS = {
     "agents": {"skills_dir": ".agents/skills", "layout": "verified"},
     "claude": {"skills_dir": "skills", "plugin": ".claude-plugin/plugin.json",
                "layout": "assumed"},
+    # A real cordis plugin: package.json + lib/index.js + bundled skills/.
+    # Installed through the host's plugin manager or by copying into a profile.
+    "dsh-plugin": {"skills_dir": "skills", "layout": "verified",
+                   "plugin_src": "plugin"},
 }
 
 SECRET_PATTERNS = [
@@ -235,6 +239,20 @@ def build(root: Path, out: Path, hosts: list[str], version: str) -> int:
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(json.dumps(plugin, ensure_ascii=False, indent=2) + "\n",
                               encoding="utf-8")
+
+        if "plugin_src" in spec:
+            src_dir = root / spec["plugin_src"]
+            for name in ("package.json", "README.md"):
+                if (src_dir / name).is_file():
+                    shutil.copy2(src_dir / name, root_dir / name)
+            if (src_dir / "lib").is_dir():
+                shutil.copytree(src_dir / "lib", root_dir / "lib")
+            pkg_path = root_dir / "package.json"
+            if pkg_path.is_file():
+                pkg = json.loads(pkg_path.read_text(encoding="utf-8"))
+                pkg["version"] = version
+                pkg_path.write_text(json.dumps(pkg, ensure_ascii=False, indent=2) + "\n",
+                                    encoding="utf-8")
 
         leaks = scan_secrets(root_dir)
         if (root_dir / ".env").exists():
