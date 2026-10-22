@@ -1533,9 +1533,9 @@
       "id": "imbad0202-academic-research-skills",
       "name": "Imbad0202/academic-research-skills",
       "url": "https://github.com/Imbad0202/academic-research-skills",
-      "kind": "unclassified",
-      "summary": "(待读 README 补充)",
-      "relevance": "",
+      "kind": "skill-collection",
+      "summary": "CC 许可的学术写作技能集（academic-paper / reviewer / pipeline / deep-research 四个）。",
+      "relevance": "流程编排思路可参考（pipeline 串起写作与评审）；许可含 NC/SA 条款，不复制正文。",
       "tags": [
         "skills"
       ],
@@ -1546,12 +1546,12 @@
       "local_path": null,
       "commit": "3224a27a2571cefef0fddfd437004cb006f2b0cb",
       "added": "2026-10-22",
-      "verified": false,
-      "probe": "exists-only (git ls-remote HEAD)",
-      "rank": 21,
-      "stars_claim": "53k ⭐",
+      "verified": true,
       "popularity_source": "wind8ai/skills-top-stars",
-      "needs_review": true
+      "needs_review": false,
+      "skills": 4,
+      "verified_at": "2026-10-22",
+      "free_tier": "open-source"
     },
     {
       "id": "jimliu-baoyu-skills",
@@ -1605,9 +1605,9 @@
       "id": "k-dense-ai-scientific-agent-skills",
       "name": "K-Dense-AI/scientific-agent-skills",
       "url": "https://github.com/K-Dense-AI/scientific-agent-skills",
-      "kind": "unclassified",
-      "summary": "(待读 README 补充)",
-      "relevance": "",
+      "kind": "skill-collection",
+      "summary": "MIT 许可的科学计算技能集，163 个技能多为领域工具包装（biopython、astropy、rdkit 等）。",
+      "relevance": "作为工具层参考源：我们缺的领域计算能力可先查这里，但不整包引入；其中大多数与我们的判断层不重叠。",
       "tags": [
         "skills"
       ],
@@ -1618,12 +1618,12 @@
       "local_path": null,
       "commit": "593377bb048752abb0152deab9fbb1083a6087df",
       "added": "2026-10-22",
-      "verified": false,
-      "probe": "exists-only (git ls-remote HEAD)",
-      "rank": 22,
-      "stars_claim": "53k ⭐",
+      "verified": true,
       "popularity_source": "wind8ai/skills-top-stars",
-      "needs_review": true
+      "needs_review": false,
+      "skills": 163,
+      "verified_at": "2026-10-22",
+      "free_tier": "open-source"
     },
     {
       "id": "kepano-obsidian-skills",
@@ -2056,6 +2056,29 @@
       "stars_claim": "43k ⭐",
       "popularity_source": "wind8ai/skills-top-stars",
       "needs_review": true
+    },
+    {
+      "id": "yuan1z0825-nature-skills",
+      "name": "Yuan1z0825/nature-skills",
+      "url": "https://github.com/Yuan1z0825/nature-skills",
+      "kind": "skill-collection",
+      "summary": "Apache-2.0 的科研全流程技能库（nature-* 20 个：检索、引用、图、润色、审稿回复等）。",
+      "relevance": "与我们 academic 链重叠最多的一个：检索/引用核对/绘图/润色都能对上。作为参考源，优先比对做法而不是引入。",
+      "tags": [
+        "skills",
+        "academic"
+      ],
+      "status": "listed",
+      "license": "see LICENSE",
+      "license_checked": true,
+      "size": "medium",
+      "skills": 20,
+      "local_path": null,
+      "commit": "c6ae86c742705fd968b13c79db1a8518a84089d4",
+      "added": "2026-10-22",
+      "verified": true,
+      "verified_at": "2026-10-22",
+      "needs_review": false
     }
   ]
 }
