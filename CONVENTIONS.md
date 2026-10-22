@@ -32,6 +32,7 @@ scripts/        可选，只在有可执行动作时建
 6. **阶段 0 只有一个**。`gateway/` 是扁平分区，不套阶段目录；其技能必须 `stage: [gateway]`，不得产出领域产物。
 7. **用户状态与技能分离**。画像和偏好在 `_profile/`，技能只读不写；写入走 `preference-distillation` 并留来源与置信度。
 8. **外部仓库只登记不提交**。克隆体只能放 `third-party/repos/<id>/`；借用他人代码、思路、文本或数据，必须在 `third-party/provenance.json` 登记，并在该技能 frontmatter 的 `sources` 里声明 registry id。许可不明的上游只许借思路，不许复制代码。
+9. **通用能力放 `shared/`，但别提前抽象**。只有同时满足「领域中立」和「至少两个领域会用」才进 `shared`；只有一个领域用的先留在该领域。依赖方向单向：领域技能可以 `deps` 指向 `shared`，反过来不允许。
 
 ## frontmatter
 

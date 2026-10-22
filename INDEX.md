@@ -37,6 +37,10 @@
 
 `_core/` 目前只有契约与模板。出现**第二个领域**真的复用同一脚本时，才把它升进 `_core/`，见 [CONVENTIONS.md](CONVENTIONS.md)。
 
+## shared（通用阶段分区，暂无技能）
+
+跨领域复用、不绑定任务的能力放这里：`shared/input` 检索与抽取、`shared/reasoning` 证据分级与矛盾检测、`shared/output` 渲染与转换、`shared/verify` 引用核对与回归。四个阶段目录已建，**其中尚未放入技能**，准入条件见 [shared/README.md](shared/README.md)。
+
 ## 外部资源
 
 不是技能，不进路由。想找现成实现或查某段思路的出处时看这里：

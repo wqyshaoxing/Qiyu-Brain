@@ -4,11 +4,12 @@
 
 不是流水线，是回环：input 的检索会被 reasoning 的怀疑打断，verify 的发现会退回 input 补证。所以目录只按**分区**组织，**阶段写进元数据**——同一个能力不会为了结构整齐被复制几份。
 
-## 四类目录
+## 五类目录
 
 | 目录 | 是什么 | 形态 |
 | --- | --- | --- |
 | `gateway/` | 阶段 0：读画像、消歧、定验收、选路由 | 扁平分区，技能直接挂一层 |
+| `shared/` | 跨领域通用能力：检索连接器、文档抽取、去重、证据分级、渲染、核验 | 领域 / 阶段 / 技能，三层，但技能必须领域中立 |
 | `academic-research/`、`coding/`、`livebetter/` | 任务领域 | 领域 / 阶段 / 技能，三层 |
 | `third-party/` | 外部现成技能与仓库的登记清单，只存链接不存代码 | 不是技能，不参与路由 |
 | `_core/`、`_memory/`、`_eval/`、`_profile/` | 契约、沉淀、样例、用户状态 | 不是技能，不参与路由 |
@@ -22,6 +23,8 @@ Qiyu-Brain/
 ├─ gateway/                阶段 0，扁平分区
 │  ├─ task-router/
 │  └─ preference-distillation/
+├─ shared/                 通用阶段分区，跨领域复用（技能暂缺）
+│  ├─ input/  reasoning/  output/  verify/
 ├─ academic-research/      领域分区
 │  ├─ input/  reasoning/  output/  verify/     ← 阶段目录，按需创建
 ├─ coding/
@@ -85,6 +88,8 @@ python scripts/validate.py
 ## 现状
 
 - 10 个契约骨架：gateway 2 个、academic-research 4 个、coding 4 个。全部 `mode: agent`，**尚无脚本动作**；`runtime.json` 的 `todo` 写明要落地的动作。
-- third-party 登记了 8 个外部仓库，**已全部通过 git 实测核实**：HEAD commit、LICENSE、文件数。star 与最近提交时间未核对（`web_fetch` 拒绝非公网 IP）。`provenance.json` 目前为空。
+- `shared/` 四个阶段目录已建，**尚无技能**；准入条件写在 `shared/README.md` 与各阶段 README。
+- third-party 登记 **86 个外部仓库**：47 个已深核（commit + LICENSE + 文件数 + SKILL.md 数量），39 个仅核存在性（`git ls-remote`）。star 数无法核实（`web_fetch` 拒绝非公网 IP）。`provenance.json` 目前为空。
+- `third-party/forum-signals.md` 记录了论坛线索与五条结论，仅到标题级——帖子正文未能读取。
 - livebetter 只有领域边界与安全契约，未建阶段目录。
-- 仓库尚未 `git init`。
+- 仓库已 `git init` 并推送到 `origin/main`。
