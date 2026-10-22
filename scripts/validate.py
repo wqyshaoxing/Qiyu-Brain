@@ -19,7 +19,8 @@ from pathlib import Path
 STAGES = ("input", "reasoning", "output", "verify", "gateway")
 LOOP_ROLES = {"entry", "transform", "render", "verify", "route"}
 MODES = {"agent", "script", "hybrid"}
-RESERVED_DIRS = {"scripts", "docs", "_core", "_memory", "_eval", "_profile", "third-party"}
+RESERVED_DIRS = {"scripts", "docs", "_core", "_memory", "_eval", "_profile",
+                 "third-party", "search-out", "dist", "config"}
 REQUIRED_FIELDS = ("name", "description", "domain", "stage", "loop_role",
                    "consumes", "produces", "deps")
 LIST_FIELDS = {"stage", "consumes", "produces", "deps", "sources"}
@@ -145,22 +146,27 @@ def check_skill(skill_dir: Path, domain: str, stage_dir: str | None,
         errors.append(f"{rel}: 'sources' 必须是行内列表")
         sources = []
 
+    deps = meta.get("deps") or []
+    if not isinstance(deps, list):
+        errors.append(f"{rel}: 'deps' 必须是行内列表")
+        deps = []
+
     for line in ("## When to use", "## Boundary", "## Workflow", "## Artifacts"):
         if line not in body:
             errors.append(f"{rel}/SKILL.md: 正文缺少 '{line}'")
 
     if not runtime.is_file():
         errors.append(f"{rel}: 缺少 runtime.json")
-        return {"name": name, "stages": stages, "sources": sources}
+        return {"name": name, "stages": stages, "sources": sources, "deps": deps}
 
     try:
         spec = json.loads(read_text(runtime))
     except json.JSONDecodeError as exc:
         errors.append(f"{rel}/runtime.json: 不是合法 JSON（{exc}）")
-        return {"name": name, "stages": stages, "sources": sources}
+        return {"name": name, "stages": stages, "sources": sources, "deps": deps}
     if not isinstance(spec, dict):
         errors.append(f"{rel}/runtime.json: 顶层必须是对象")
-        return {"name": name, "stages": stages, "sources": sources}
+        return {"name": name, "stages": stages, "sources": sources, "deps": deps}
 
     if spec.get("schema") != 1:
         errors.append(f"{rel}/runtime.json: schema 必须为 1")
@@ -238,7 +244,7 @@ def check_skill(skill_dir: Path, domain: str, stage_dir: str | None,
             if not isinstance(completion.get(key), bool):
                 errors.append(f"{rel}/runtime.json: completion.{key} 必须是布尔值")
 
-    return {"name": name, "stages": stages, "sources": sources}
+    return {"name": name, "stages": stages, "sources": sources, "deps": deps}
 
 
 def load_json(path: Path, errors: list[str]) -> object | None:
@@ -421,6 +427,7 @@ def main() -> int:
                     errors.append(f"{name}: 重复出现于 {registry[name]} 和 {skill_dir.as_posix()}")
                 else:
                     registry[name] = skill_dir.as_posix()
+            info["domain"] = domain
             results.append(info)
 
     sources_of = {
@@ -428,6 +435,37 @@ def main() -> int:
         for r in results
         if r.get("sources")
     }
+    by_name = {str(r.get("name")): r for r in results if r.get("name")}
+    domain_of = {name: str(info.get("domain")) for name, info in by_name.items()}
+
+    for name, info in by_name.items():
+        for dep in info.get("deps") or []:
+            if dep not in by_name:
+                errors.append(f"{name}: deps 指向不存在的技能 '{dep}'")
+                continue
+            if domain_of.get(name) == "shared" and domain_of.get(dep) != "shared":
+                errors.append(f"{name}: shared 只能依赖 shared，不能依赖 '{dep}'（{domain_of.get(dep)}）")
+
+    state: dict[str, int] = {}
+
+    def walk(node: str, stack: list[str]) -> None:
+        state[node] = 1
+        for dep in by_name[node].get("deps") or []:
+            if dep not in by_name:
+                continue
+            if state.get(dep) == 1:
+                errors.append("依赖成环: " + " -> ".join(stack + [dep]))
+            elif state.get(dep, 0) == 0:
+                walk(dep, stack + [dep])
+        state[node] = 2
+
+    for node in by_name:
+        if state.get(node, 0) == 0:
+            walk(node, [node])
+
+    dep_edges = sum(
+        len([d for d in (by_name[n].get("deps") or []) if d in by_name]) for n in by_name
+    )
     third_party_count = check_third_party(root, set(registry), sources_of, errors, warnings)
 
     index = root / "INDEX.md"
@@ -443,6 +481,7 @@ def main() -> int:
     report = {
         "skills": len(ordered),
         "third_party": third_party_count,
+        "deps_edges": dep_edges,
         "errors": errors,
         "warnings": warnings,
         "registry": [{"name": r.get("name"), "stage": r.get("stages")} for r in ordered],

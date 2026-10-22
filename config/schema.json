@@ -1,0 +1,117 @@
+{
+  "schema": 1,
+  "env_file": ".env",
+  "env_template": ".env.example",
+  "note": "本文件描述插件需要哪些凭据、属于哪个技能、是否必填。GUI 与 doctor 都读它，不要在代码里硬编码 key 名。",
+  "groups": [
+    {
+      "id": "search",
+      "title": "检索来源",
+      "skills": ["shared/input/search-connectors"],
+      "keys": [
+        {
+          "name": "CROSSREF_MAILTO",
+          "secret": false,
+          "required": false,
+          "provider": "Crossref",
+          "help": "填入邮箱可进入礼貌池，限流更宽松。留空也能用。",
+          "signup": "https://www.crossref.org/documentation/retrieve-metadata/rest-api/"
+        },
+        {
+          "name": "SEMANTIC_SCHOLAR_API_KEY",
+          "secret": true,
+          "required": false,
+          "provider": "Semantic Scholar",
+          "help": "不填则匿名访问，限流较低。",
+          "signup": "https://www.semanticscholar.org/product/api"
+        },
+        {
+          "name": "PUBMED_API_KEY",
+          "secret": true,
+          "required": false,
+          "provider": "PubMed",
+          "help": "不填时按 3 请求/秒限流，通常够用。",
+          "signup": "https://www.ncbi.nlm.nih.gov/account/"
+        },
+        {
+          "name": "EXA_API_KEY",
+          "secret": true,
+          "required": false,
+          "provider": "Exa",
+          "help": "付费语义检索。未配置时该来源会被跳过，不影响其它来源。",
+          "signup": "https://dashboard.exa.ai/api-keys"
+        }
+      ]
+    },
+    {
+      "id": "zotero",
+      "title": "文献库",
+      "skills": ["academic-research/input/zotero-import"],
+      "keys": [
+        {
+          "name": "ZOTERO_API_KEY",
+          "secret": true,
+          "required": true,
+          "provider": "Zotero",
+          "help": "在 Zotero 设置中创建专用 key，只勾选读写权限。",
+          "signup": "https://www.zotero.org/settings/keys"
+        },
+        {
+          "name": "ZOTERO_LIBRARY_ID",
+          "secret": false,
+          "required": true,
+          "provider": "Zotero",
+          "help": "数字形式的 userID 或 groupID，见 keys 页面右上角。",
+          "signup": "https://www.zotero.org/settings/keys"
+        },
+        {
+          "name": "ZOTERO_LIBRARY_TYPE",
+          "secret": false,
+          "required": false,
+          "default": "user",
+          "provider": "Zotero",
+          "help": "user 或 group。",
+          "signup": "https://www.zotero.org/settings/keys"
+        }
+      ]
+    },
+    {
+      "id": "mineru",
+      "title": "PDF 解析",
+      "skills": ["academic-research/input/mineru-extract"],
+      "keys": [
+        {
+          "name": "MINERU_API_KEY",
+          "secret": true,
+          "required": true,
+          "provider": "MinerU",
+          "help": "用于 PDF → Markdown 与图片提取。",
+          "signup": "https://mineru.net"
+        }
+      ]
+    },
+    {
+      "id": "local",
+      "title": "本地界面",
+      "skills": [],
+      "keys": [
+        {
+          "name": "QIYU_GUI_HOST",
+          "secret": false,
+          "required": false,
+          "default": "127.0.0.1",
+          "help": "只允许本机监听，不要改成 0.0.0.0。",
+          "signup": ""
+        },
+        {
+          "name": "QIYU_GUI_PORT",
+          "secret": false,
+          "required": false,
+          "default": "8765",
+          "help": "端口冲突时改这里。",
+          "signup": ""
+        }
+      ]
+    }
+  ]
+}

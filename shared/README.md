@@ -30,6 +30,36 @@
 | `output/` | 成形：渲染、转换、导出、翻译 |
 | `verify/` | 核验：引用核对、可复现性、回归、哈希 |
 
+## 定位：基石层
+
+`shared/` 不是「杂项」目录，是**其它技能的地基**。三层单向：`gateway → shared → 领域`。
+
+只有 `shared` 能被所有领域安全依赖，所以它必须自己干净：
+
+- 只依赖 `shared` 内的技能，绝不反向依赖某个领域。
+- 只用标准库；确需第三方包时在 `actions[].requires` 声明，缺依赖明确报错。
+- 发布的接口要稳：artifact roles、脚本 CLI 参数、退出码、失败语义。改这些等于改公共 API。
+
+## 基石 skill 的四件交付物
+
+| 交付物 | 位置 | 谁用 |
+| --- | --- | --- |
+| artifact roles | `runtime.json` 的 `artifacts` | agent 层串联 |
+| 脚本入口 | `scripts/*.py` + 稳定 CLI | 程序层调用 |
+| 失败语义 | `runtime.json` 的 `recovery` | 上层决定重试还是上报 |
+| 依赖声明 | `actions[].requires` | 构建与 doctor 检查 |
+
+## 安装后的复用
+
+技能装到宿主目录后是独立副本，跨技能 `import` 会断。复用只发生在源码层：构建时把基础库 vendoring 进每个安装包，产物自包含。落地在 `scripts/build_plugin.py`（待建）。
+
 ## 现状
 
-四个阶段目录已建立，**尚未放入技能**。每个目录下的 README 写了准入门槛和候选清单——按需创建，不预建空壳技能。
+| 阶段 | 技能 | 说明 |
+| --- | --- | --- |
+| input | [search-connectors](input/search-connectors/SKILL.md) | 六源检索、有界重试、DOI 级去重、三者产物留痕。标准库实现，无依赖 |
+| reasoning | — | 候选见 [reasoning/README.md](reasoning/README.md) |
+| output | — | 候选见 [output/README.md](output/README.md) |
+| verify | — | 候选见 [verify/README.md](verify/README.md) |
+
+其余阶段按需创建技能，不预建空壳。

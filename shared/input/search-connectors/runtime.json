@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "mode": "hybrid",
+  "actions": [
+    {
+      "name": "search",
+      "script": "scripts/search.py",
+      "external": true,
+      "requires": ["network"],
+      "optional_requires": [
+        "EXA_API_KEY",
+        "SEMANTIC_SCHOLAR_API_KEY",
+        "PUBMED_API_KEY",
+        "CROSSREF_MAILTO"
+      ],
+      "effects": "向公开学术 API 发起有界查询，写出 query-plan.md、results.csv、search-log.json；不下载全文，不改动目录以外的文件。",
+      "plan_supported": true
+    }
+  ],
+  "artifacts": [
+    {
+      "role": "query_plan",
+      "kind": "markdown",
+      "required": true,
+      "note": "查询变体、来源、条数上限、纳排标准；必须写在真正检索之前。"
+    },
+    {
+      "role": "result_matrix",
+      "kind": "csv",
+      "required": true,
+      "note": "每行含来源、标识符、标题、作者、年份、venue、URL、证据层级、抓取时间；不得有无标识符的空行。"
+    },
+    {
+      "role": "search_log",
+      "kind": "json",
+      "required": true,
+      "note": "逐来源状态、HTTP 码、命中数、耗时、重试、错误；skipped 与 failed 必须分开。"
+    }
+  ],
+  "completion": {
+    "requires_review": true,
+    "hash_bound": true
+  },
+  "recovery": [
+    "429/5xx 退避重试 3 次后标记 failed，保留已有结果，不切换查询式。",
+    "付费来源缺少 key：跳过并在 search-log 的 skipped 中写出具体环境变量名。",
+    "网络不可达：如实报告，不得静默改用其他来源。"
+  ],
+  "todo": [
+    "接入 OpenAlex 的 cursor 深分页，支持超过 200 条的结果集。",
+    "增加按 DOI 批量补元数据（单条查询 → /works/{doi}）。"
+  ]
+}
